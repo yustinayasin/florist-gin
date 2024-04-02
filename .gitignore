@@ -1,0 +1,8 @@
+# Compiled binary executables
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Dependency directories
+node_modules/

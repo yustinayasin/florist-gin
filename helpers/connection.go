@@ -1,20 +1,21 @@
 package helpers
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type Database struct {
-	DB *sql.DB
+	DB *gorm.DB
 }
 
-func NewDatabase() (*Database, error) {
+func NewDatabase() (*gorm.DB, error) {
 	err := godotenv.Load("config.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -24,17 +25,16 @@ func NewDatabase() (*Database, error) {
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASS")
 	dbName := os.Getenv("DB_NAME")
+	dbPort := os.Getenv("DB_PORT")
 
 	//connection
-	connStr := fmt.Sprintf("host=%s dbname=%s user=%s password=%s sslmode=disable", dbHost, dbName, dbUser, dbPass)
+	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta", dbHost, dbUser, dbPass, dbName, dbPort)
 
-	db, err := sql.Open("postgres", connStr)
+	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
-	return &Database{
-		DB: db,
-	}, nil
+	return db, nil
 }

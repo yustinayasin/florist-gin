@@ -27,6 +27,10 @@ type JWTConfig struct {
 	ErrorHandlerWithContext func(error, *gin.Context) error
 }
 
+type GeneratorToken interface {
+	GenerateToken(userId int) string
+}
+
 func (jwtConf *ConfigJWT) Init() JWTConfig {
 	return JWTConfig{
 		Claims:     &JwtCustomClaims{},
@@ -133,7 +137,7 @@ func RequireAuth(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface user
 			return
 		}
 
-		user, err := userUseCase.FindUser(subsInt)
+		user, err := userUseCase.GetUser(subsInt)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user data"})
 			c.Abort()

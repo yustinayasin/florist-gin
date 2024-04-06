@@ -13,7 +13,7 @@ type UserUseCaseInterface interface {
 	Login(user User) (User, error)
 	EditUser(user User, id int) (User, error)
 	DeleteUser(id int) (User, error)
-	FindUser(id int) (User, error)
+	GetUser(id int) (User, error)
 }
 
 type UserRepoInterface interface {
@@ -21,5 +21,5 @@ type UserRepoInterface interface {
 	Login(user User) (User, error)
 	EditUser(user User, id int) (User, error)
 	DeleteUser(id int) (User, error)
-	FindUser(id int) (User, error)
+	GetUser(id int) (User, error)
 }

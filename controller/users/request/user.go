@@ -8,9 +8,12 @@ type UserLogin struct {
 }
 
 type UserEdit struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	Address     string `json:"address"`
+	PhoneNumber string `json:"phoneNumber"`
+	PostalCode  string `json:"postalCode"`
 }
 
 func (user *UserLogin) ToUsecase() *users.User {
@@ -22,8 +25,11 @@ func (user *UserLogin) ToUsecase() *users.User {
 
 func (user *UserEdit) ToUsecase() *users.User {
 	return &users.User{
-		Name:     user.Name,
-		Email:    user.Email,
-		Password: user.Password,
+		Name:        user.Name,
+		Email:       user.Email,
+		Password:    user.Password,
+		Address:     user.Address,
+		PhoneNumber: user.PhoneNumber,
+		PostalCode:  user.PostalCode,
 	}
 }

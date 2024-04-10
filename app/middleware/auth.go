@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"florist-gin/business/users"
+	"florist-gin/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -36,7 +37,7 @@ func (jwtConf *ConfigJWT) Init() JWTConfig {
 		Claims:     &JwtCustomClaims{},
 		SigningKey: []byte(jwtConf.SecretJWT),
 		ErrorHandlerWithContext: func(e error, c *gin.Context) error {
-			c.JSON(http.StatusForbidden, gin.H{"error": e.Error()})
+			utils.ErrorResponseWithoutMessages(c, http.StatusForbidden, e.Error())
 			return nil
 		},
 	}
@@ -57,7 +58,6 @@ func (configJWT ConfigJWT) GenerateToken(userId int) string {
 func verifyToken(tokenString string, jwtConf ConfigJWT, c *gin.Context) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			c.JSON(http.StatusForbidden, gin.H{"Unexpected signing method:": token.Header["alg"]})
 			return nil, errors.New("unexpected signing method")
 		}
 
@@ -65,13 +65,11 @@ func verifyToken(tokenString string, jwtConf ConfigJWT, c *gin.Context) (*jwt.To
 	})
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"Failed to parse token:": err})
 		return nil, err
 	}
 
 	// Validate token
 	if !token.Valid {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Token is invalid"})
 		return nil, jwt.ErrSignatureInvalid
 	}
 
@@ -84,7 +82,7 @@ func RequireAuth(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface user
 		// Get the token from header
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			utils.ErrorResponseWithoutMessages(c, http.StatusUnauthorized, "You need to login first")
 			c.Abort()
 			return
 		}
@@ -94,7 +92,7 @@ func RequireAuth(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface user
 		// Verify token
 		token, err := verifyToken(tokenString, jwtConf, c)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			utils.ErrorResponseWithoutMessages(c, http.StatusUnauthorized, "Invalid Token")
 			c.Abort()
 			return
 		}
@@ -102,22 +100,22 @@ func RequireAuth(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface user
 		// Check the expiry date
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Failed to extract claims"})
+			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to extract claims")
 			c.Abort()
 			return
 		}
 
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token expired"})
+			utils.ErrorResponseWithoutMessages(c, http.StatusUnauthorized, "Token expired")
 			c.Abort()
 			return
 		}
 
 		// Find the user
 		// Access the "subs" claim and convert it to int
-		subsClaim, ok := claims["id"].(float64)
+		subsClaim, ok := claims["userId"].(float64)
 		if !ok {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Failed to parse user ID"})
+			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to parse user ID")
 			c.Abort()
 			return
 		}
@@ -132,14 +130,14 @@ func RequireAuth(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface user
 
 		// Ensure userUseCase is not nil before calling methods on it
 		if userUseCase == nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize user use case"})
+			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to initialize user use case")
 			c.Abort()
 			return
 		}
 
 		user, err := userUseCase.GetUser(subsInt)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user data"})
+			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to fetch user data")
 			c.Abort()
 			return
 		}

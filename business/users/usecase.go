@@ -3,6 +3,7 @@ package users
 import (
 	"errors"
 	"florist-gin/helpers"
+	"fmt"
 )
 
 type GeneratorToken interface {
@@ -58,13 +59,15 @@ func (userUseCase *UserUseCase) Login(user User) (User, error) {
 
 	userRepo, err := userUseCase.Repo.Login(user)
 
+	fmt.Println(err)
+
 	if err != nil {
 		return User{}, err
 	}
 
 	match := helpers.CheckPasswordHash(user.Password, userRepo.Password)
 
-	if match != true {
+	if !match {
 		return User{}, errors.New("password doesn't match")
 	}
 
@@ -117,6 +120,10 @@ func (userUseCase *UserUseCase) DeleteUser(id int) (User, error) {
 }
 
 func (userUseCase *UserUseCase) GetUser(id int) (User, error) {
+	if id == 0 {
+		return User{}, errors.New("user ID cannot be empty")
+	}
+
 	userRepo, err := userUseCase.Repo.GetUser(id)
 
 	if err != nil {

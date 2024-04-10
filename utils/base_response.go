@@ -27,11 +27,12 @@ func ErrorResponseWithoutMessages(c *gin.Context, status int, message string) {
 	c.JSON(status, response)
 }
 
-func SuccessResponse(c *gin.Context, data interface{}) {
+func SuccessResponse(c *gin.Context, data interface{}, messages []string) {
 	response := BaseResponse{
-		Status:  http.StatusOK,
-		Message: "success",
-		Data:    data,
+		Status:   http.StatusOK,
+		Message:  "success",
+		Messages: messages,
+		Data:     data,
 	}
 	c.JSON(http.StatusOK, response)
 }

@@ -1,21 +1,41 @@
 package main
 
 import (
+	middleware "florist-gin/app/middleware"
+	"florist-gin/app/routes"
 	"florist-gin/helpers"
 	"log"
-	"net/http"
 	"os"
+	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 
+	cartsProductsUsecase "florist-gin/business/cartsproducts"
+	cartsProductsController "florist-gin/controller/cartsproducts"
+	cartsProductsRepo "florist-gin/drivers/databases/cartsproducts"
+	categoryRepo "florist-gin/drivers/databases/categories"
+
+	userUsecase "florist-gin/business/users"
+	userController "florist-gin/controller/users"
 	userRepo "florist-gin/drivers/databases/users"
+
+	productUsecase "florist-gin/business/products"
+	productController "florist-gin/controller/products"
+	productRepo "florist-gin/drivers/databases/products"
+
+	cartUsecase "florist-gin/business/carts"
+	cartController "florist-gin/controller/carts"
+	cartRepo "florist-gin/drivers/databases/carts"
 )
 
 func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&userRepo.User{},
+		&categoryRepo.Category{},
+		&cartRepo.Cart{},
+		&productRepo.Product{},
+		&cartsProductsRepo.CartsProducts{},
 	)
 }
 
@@ -26,9 +46,9 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	// dbPort := os.Getenv("DB_PORT")
-
-	router := gin.Default()
+	secretJWT := os.Getenv("JWT_SECRET")
+	expiresDuration := os.Getenv("JWT_EXPIRED")
+	expiresDurationInt, _ := strconv.Atoi(expiresDuration)
 
 	db, err := helpers.NewDatabase()
 
@@ -38,14 +58,34 @@ func main() {
 
 	dbMigrate(db)
 
-	router.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Welcome to Vanilla Florist!")
-	})
-
-	port := ":8000"
-	err = router.Run(port)
-	if err != nil {
-		log.Println("Failed to start server:", err)
-		os.Exit(1)
+	jwtConf := middleware.ConfigJWT{
+		SecretJWT:       secretJWT,
+		ExpiresDuration: expiresDurationInt,
 	}
+
+	userRepoInterface := userRepo.NewUserRepository(db, cartRepo.CartRepository{Db: db})
+	userUseCaseInterface := userUsecase.NewUseCase(userRepoInterface, jwtConf)
+	userControllerInterface := userController.NewUserController(userUseCaseInterface)
+
+	productRepoInterface := productRepo.NewProductRepository(db)
+	productUseCaseInterface := productUsecase.NewUseCase(productRepoInterface)
+	productControllerInterface := productController.NewProductController(productUseCaseInterface)
+
+	cartRepoInterface := cartRepo.NewCartRepository(db)
+	cartUseCaseInterface := cartUsecase.NewUseCase(cartRepoInterface)
+	cartControllerInterface := cartController.NewCartController(cartUseCaseInterface)
+
+	cartsProductsRepoInterface := cartsProductsRepo.NewCartsProductsRepository(db)
+	cartsProductsUseCaseInterface := cartsProductsUsecase.NewUseCase(cartsProductsRepoInterface)
+	cartsProductsControllerInterface := cartsProductsController.NewCartsProductsController(cartsProductsUseCaseInterface)
+
+	routesInit := routes.RouteControllerList{
+		UserController:          *userControllerInterface,
+		ProductController:       *productControllerInterface,
+		CartController:          *cartControllerInterface,
+		CartsProductsController: *cartsProductsControllerInterface,
+		JWTConfig:               &jwtConf,
+	}
+
+	routesInit.RouteRegister(userRepoInterface)
 }

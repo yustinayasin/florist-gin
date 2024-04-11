@@ -1,5 +1,7 @@
 package users
 
+import "florist-gin/business/types"
+
 type User struct {
 	Id          int
 	Name        string
@@ -9,6 +11,8 @@ type User struct {
 	Address     string
 	PhoneNumber string
 	PostalCode  string
+	TypeId      int
+	Type        types.Type
 }
 
 type UserUseCaseInterface interface {

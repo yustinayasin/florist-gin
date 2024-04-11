@@ -1,6 +1,9 @@
 package users
 
-import "florist-gin/business/users"
+import (
+	"florist-gin/business/users"
+	types "florist-gin/drivers/databases/type"
+)
 
 type User struct {
 	Id          int `gorm:"primaryKey;unique;autoIncrement:true"`
@@ -10,9 +13,13 @@ type User struct {
 	Address     string
 	PhoneNumber string
 	PostalCode  string
+	TypeId      int
+	Type        types.Type `gorm:"foreignKey:TypeId"`
 }
 
 func (user User) ToUsecase() users.User {
+	newType := types.Type.ToUseCase(user.Type)
+
 	return users.User{
 		Id:          user.Id,
 		Name:        user.Name,
@@ -21,6 +28,8 @@ func (user User) ToUsecase() users.User {
 		Address:     user.Address,
 		PhoneNumber: user.PhoneNumber,
 		PostalCode:  user.PostalCode,
+		TypeId:      user.TypeId,
+		Type:        newType,
 	}
 }
 
@@ -34,6 +43,8 @@ func ToUsecaseList(user []User) []users.User {
 }
 
 func FromUsecase(user users.User) User {
+	newType := types.FromUsecase(user.Type)
+
 	return User{
 		Id:          user.Id,
 		Name:        user.Name,
@@ -42,5 +53,7 @@ func FromUsecase(user users.User) User {
 		Address:     user.Address,
 		PhoneNumber: user.PhoneNumber,
 		PostalCode:  user.PostalCode,
+		TypeId:      user.TypeId,
+		Type:        newType,
 	}
 }

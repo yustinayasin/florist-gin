@@ -25,7 +25,7 @@ func NewUserRepository(database *gorm.DB, cartRepo carts.CartRepository) users.U
 func (repo *UserRepository) SignUp(user users.User) (users.User, error) {
 	userDB := FromUsecase(user)
 
-	result := repo.Db.Preload("users").Create(&userDB)
+	result := repo.Db.Create(&userDB)
 
 	if result.Error != nil {
 		return users.User{}, result.Error
@@ -36,13 +36,10 @@ func (repo *UserRepository) SignUp(user users.User) (users.User, error) {
 	}
 
 	result = repo.CartRepo.Db.Preload("carts").Create(&cart)
-	fmt.Println("a")
 
 	if result.Error != nil {
 		return users.User{}, result.Error
 	}
-
-	fmt.Println("b")
 
 	return userDB.ToUsecase(), nil
 }

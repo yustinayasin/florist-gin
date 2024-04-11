@@ -149,3 +149,83 @@ func RequireAuth(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface user
 		next(c)
 	}
 }
+
+func RequireAuthAdmin(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface users.UserRepoInterface) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Get the token from header
+		tokenString := c.GetHeader("Authorization")
+		if tokenString == "" {
+			utils.ErrorResponseWithoutMessages(c, http.StatusUnauthorized, "You need to login first")
+			c.Abort()
+			return
+		}
+
+		tokenString = tokenString[len("Bearer "):]
+
+		// Verify token
+		token, err := verifyToken(tokenString, jwtConf, c)
+		if err != nil {
+			utils.ErrorResponseWithoutMessages(c, http.StatusUnauthorized, "Invalid Token")
+			c.Abort()
+			return
+		}
+
+		// Check the expiry date
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to extract claims")
+			c.Abort()
+			return
+		}
+
+		if float64(time.Now().Unix()) > claims["exp"].(float64) {
+			utils.ErrorResponseWithoutMessages(c, http.StatusUnauthorized, "Token expired")
+			c.Abort()
+			return
+		}
+
+		// Find the user
+		// Access the "subs" claim and convert it to int
+		subsClaim, ok := claims["userId"].(float64)
+		if !ok {
+			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to parse user ID")
+			c.Abort()
+			return
+		}
+
+		// Convert subsClaim to int
+		subsInt := int(subsClaim)
+
+		userUseCase := &users.UserUseCase{
+			Repo: userRepoInterface,
+			Jwt:  jwtConf,
+		}
+
+		// Ensure userUseCase is not nil before calling methods on it
+		if userUseCase == nil {
+			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to initialize user use case")
+			c.Abort()
+			return
+		}
+
+		user, err := userUseCase.GetUser(subsInt)
+
+		if err != nil {
+			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to fetch user data")
+			c.Abort()
+			return
+		}
+
+		if user.TypeId != 1 {
+			utils.ErrorResponseWithoutMessages(c, http.StatusUnauthorized, "You don't have the authorization")
+			c.Abort()
+			return
+		}
+
+		// Attach the user to the request context
+		c.Set("user", user)
+
+		// Call the next handler
+		next(c)
+	}
+}

@@ -35,6 +35,8 @@ func (userUseCase *UserUseCase) SignUp(user User) (User, error) {
 		return User{}, errors.New("password cannot be empty")
 	}
 
+	user.TypeId = 2
+
 	hash, _ := helpers.HashPassword(user.Password)
 
 	user.Password = hash

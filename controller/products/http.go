@@ -6,7 +6,9 @@ import (
 	"florist-gin/utils"
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,7 +29,35 @@ func (controller *ProductController) AddProduct(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("test")
+	// Retrieve the file from the form data
+	file, errPhoto := c.FormFile("photo")
+	if errPhoto != nil {
+		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "No file uploaded")
+		return
+	}
+
+	// Specify the maximum file size (in bytes)
+	maxFileSize := int64(10 * 1024 * 1024) // 10 MB
+
+	// Check if the file size exceeds the maximum size
+	if file.Size > maxFileSize {
+		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "File size exceeds the maximum allowed size")
+		return
+	}
+
+	// Retrieve the file name from the file header
+	fileName := file.Filename
+
+	// Create a unique file name to avoid overwriting existing files
+	uniqueFileName := fmt.Sprintf("%s-%d%s", fileName[:len(fileName)-len(filepath.Ext(fileName))], time.Now().UnixNano(), filepath.Ext(fileName))
+
+	fileReader, errOpenFile := file.Open()
+
+	if errOpenFile != nil {
+		utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to open file")
+		return
+	}
+	defer fileReader.Close()
 
 	var productAddProduct request.Product
 
@@ -38,7 +68,8 @@ func (controller *ProductController) AddProduct(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(productAddProduct)
+	productAddProduct.FileName = uniqueFileName
+	productAddProduct.File = fileReader
 
 	product, errRepo := controller.usecase.AddProduct(*productAddProduct.ToUsecase())
 
@@ -58,13 +89,15 @@ func (controller *ProductController) EditProduct(c *gin.Context) {
 
 	var productEdit request.Product
 
-	productId, err := strconv.Atoi(c.Param("productId"))
+	productId, err := strconv.ParseUint(c.Param("productId"), 10, 32)
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Product ID must be an integer", err)
 		c.Abort()
 		return
 	}
+
+	parseUint32 := uint32(productId)
 
 	err = c.BindJSON(&productEdit)
 
@@ -73,7 +106,7 @@ func (controller *ProductController) EditProduct(c *gin.Context) {
 		return
 	}
 
-	product, errRepo := controller.usecase.EditProduct(*productEdit.ToUsecase(), productId)
+	product, errRepo := controller.usecase.EditProduct(*productEdit.ToUsecase(), parseUint32)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)
@@ -89,7 +122,7 @@ func (controller *ProductController) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	productId, err := strconv.Atoi(c.Param("productId"))
+	productId, err := strconv.ParseUint(c.Param("productId"), 10, 32)
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Product ID must be an integer", err)
@@ -97,7 +130,9 @@ func (controller *ProductController) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	product, errRepo := controller.usecase.DeleteProduct(productId)
+	parseUint32 := uint32(productId)
+
+	product, errRepo := controller.usecase.DeleteProduct(parseUint32)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)
@@ -113,7 +148,7 @@ func (controller *ProductController) GetProductDetail(c *gin.Context) {
 		return
 	}
 
-	productId, err := strconv.Atoi(c.Param("productId"))
+	productId, err := strconv.ParseUint(c.Param("productId"), 10, 32)
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Product ID must be an integer", err)
@@ -121,7 +156,9 @@ func (controller *ProductController) GetProductDetail(c *gin.Context) {
 		return
 	}
 
-	product, errRepo := controller.usecase.GetProductDetail(productId)
+	parseUint32 := uint32(productId)
+
+	product, errRepo := controller.usecase.GetProductDetail(parseUint32)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)

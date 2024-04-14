@@ -25,7 +25,8 @@ func (controller *CartController) GetCart(c *gin.Context) {
 		return
 	}
 
-	cartId, err := strconv.Atoi(c.Param("cartId"))
+	cartId, err := strconv.ParseUint(c.Param("cartId"), 10, 32)
+	paramUint32 := uint32(cartId)
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Cart ID must be an integer", err)
@@ -33,7 +34,7 @@ func (controller *CartController) GetCart(c *gin.Context) {
 		return
 	}
 
-	cart, errRepo := controller.usecase.GetCart(cartId)
+	cart, errRepo := controller.usecase.GetCart(paramUint32)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)

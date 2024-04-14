@@ -3,10 +3,11 @@ package response
 import (
 	"florist-gin/business/types"
 	"florist-gin/business/users"
+	"time"
 )
 
 type UserResponse struct {
-	Id          int        `json:"id"`
+	Id          uint32     `json:"id"`
 	Email       string     `json:"email"`
 	Name        string     `json:"name"`
 	Password    string     `json:"password"`
@@ -14,8 +15,10 @@ type UserResponse struct {
 	PhoneNumber string     `json:"phoneNumber"`
 	PostalCode  string     `json:"postalCode"`
 	Token       string     `json:"token"`
-	TypeId      int        `json:"typeID"`
+	TypeId      uint32     `json:"typeID"`
 	Type        types.Type `json:"type"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func FromUsecase(user users.User) UserResponse {
@@ -29,6 +32,8 @@ func FromUsecase(user users.User) UserResponse {
 		PostalCode:  user.PostalCode,
 		Token:       user.Token,
 		TypeId:      user.TypeId,
+		CreatedAt:   user.CreatedAt,
+		UpdatedAt:   user.UpdatedAt,
 	}
 }
 

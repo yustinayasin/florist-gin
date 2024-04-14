@@ -1,12 +1,17 @@
 package cartsproducts
 
-import "florist-gin/business/cartsproducts"
+import (
+	"florist-gin/business/cartsproducts"
+	"time"
+)
 
 type CartsProducts struct {
-	Id        int `gorm:"primaryKey"`
-	CartId    int
-	ProductId int
+	Id        uint32 `gorm:"primaryKey"`
+	CartId    uint32
+	ProductId uint32
 	Quantity  int
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func (cartsProducts CartsProducts) ToUseCase() cartsproducts.CartsProducts {
@@ -15,6 +20,8 @@ func (cartsProducts CartsProducts) ToUseCase() cartsproducts.CartsProducts {
 		CartId:    cartsProducts.CartId,
 		ProductId: cartsProducts.ProductId,
 		Quantity:  cartsProducts.Quantity,
+		CreatedAt: cartsProducts.CreatedAt,
+		UpdatedAt: cartsProducts.UpdatedAt,
 	}
 }
 
@@ -24,5 +31,7 @@ func FromUsecase(cartsProducts cartsproducts.CartsProducts) CartsProducts {
 		CartId:    cartsProducts.CartId,
 		ProductId: cartsProducts.ProductId,
 		Quantity:  cartsProducts.Quantity,
+		CreatedAt: cartsProducts.CreatedAt,
+		UpdatedAt: cartsProducts.UpdatedAt,
 	}
 }

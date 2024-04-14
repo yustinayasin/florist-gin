@@ -7,7 +7,7 @@ import (
 )
 
 type GeneratorToken interface {
-	GenerateToken(userId int) string
+	GenerateToken(userId uint32) string
 }
 
 type UserUseCase struct {
@@ -78,7 +78,7 @@ func (userUseCase *UserUseCase) Login(user User) (User, error) {
 	return userRepo, nil
 }
 
-func (userUseCase *UserUseCase) EditUser(user User, id int) (User, error) {
+func (userUseCase *UserUseCase) EditUser(user User, id uint32) (User, error) {
 	if id == 0 {
 		return User{}, errors.New("user ID cannot be empty")
 	}
@@ -107,7 +107,7 @@ func (userUseCase *UserUseCase) EditUser(user User, id int) (User, error) {
 	return userRepo, nil
 }
 
-func (userUseCase *UserUseCase) DeleteUser(id int) (User, error) {
+func (userUseCase *UserUseCase) DeleteUser(id uint32) (User, error) {
 	if id == 0 {
 		return User{}, errors.New("user ID cannot be empty")
 	}
@@ -121,7 +121,7 @@ func (userUseCase *UserUseCase) DeleteUser(id int) (User, error) {
 	return userRepo, nil
 }
 
-func (userUseCase *UserUseCase) GetUser(id int) (User, error) {
+func (userUseCase *UserUseCase) GetUser(id uint32) (User, error) {
 	if id == 0 {
 		return User{}, errors.New("user ID cannot be empty")
 	}

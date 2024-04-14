@@ -35,6 +35,10 @@ func (productUseCase *ProductUseCase) AddProduct(product Product) (Product, erro
 		return Product{}, errors.New("category id cannot be empty")
 	}
 
+	if product.FileName == "" {
+		return Product{}, errors.New("file name cannot be empty")
+	}
+
 	productRepo, err := productUseCase.Repo.AddProduct(product)
 
 	if err != nil {
@@ -44,7 +48,7 @@ func (productUseCase *ProductUseCase) AddProduct(product Product) (Product, erro
 	return productRepo, nil
 }
 
-func (productUseCase *ProductUseCase) EditProduct(product Product, id int) (Product, error) {
+func (productUseCase *ProductUseCase) EditProduct(product Product, id uint32) (Product, error) {
 	if id == 0 {
 		return Product{}, errors.New("product ID cannot be empty")
 	}
@@ -65,6 +69,10 @@ func (productUseCase *ProductUseCase) EditProduct(product Product, id int) (Prod
 		return Product{}, errors.New("stock cannot be empty")
 	}
 
+	if product.FileName == "" {
+		return Product{}, errors.New("file name cannot be empty")
+	}
+
 	if product.CategoryId == 0 {
 		return Product{}, errors.New("category id cannot be empty")
 	}
@@ -78,7 +86,7 @@ func (productUseCase *ProductUseCase) EditProduct(product Product, id int) (Prod
 	return productRepo, nil
 }
 
-func (productUseCase *ProductUseCase) DeleteProduct(id int) (Product, error) {
+func (productUseCase *ProductUseCase) DeleteProduct(id uint32) (Product, error) {
 	if id == 0 {
 		return Product{}, errors.New("product ID cannot be empty")
 	}
@@ -92,7 +100,7 @@ func (productUseCase *ProductUseCase) DeleteProduct(id int) (Product, error) {
 	return productRepo, nil
 }
 
-func (productUseCase *ProductUseCase) GetProductDetail(id int) (Product, error) {
+func (productUseCase *ProductUseCase) GetProductDetail(id uint32) (Product, error) {
 	if id == 0 {
 		return Product{}, errors.New("product ID cannot be empty")
 	}

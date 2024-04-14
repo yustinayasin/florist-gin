@@ -1,6 +1,6 @@
 package categories
 
 type Category struct {
-	Id   int
+	Id   uint32
 	Name string
 }

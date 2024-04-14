@@ -3,12 +3,15 @@ package response
 import (
 	"florist-gin/business/carts"
 	"florist-gin/business/products"
+	"time"
 )
 
 type CartResponse struct {
-	Id      int `json:"id"`
-	UserId  int `json:"user_id"`
-	Product []products.Product
+	Id        uint32 `json:"id"`
+	UserId    uint32 `json:"user_id"`
+	Product   []products.Product
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func FromUsecase(cart carts.Cart) CartResponse {

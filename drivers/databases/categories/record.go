@@ -3,7 +3,7 @@ package categories
 import "florist-gin/business/categories"
 
 type Category struct {
-	Id   int `gorm:"primaryKey;unique;autoIncrement:true"`
+	Id   uint32 `gorm:"primaryKey;unique"`
 	Name string
 }
 

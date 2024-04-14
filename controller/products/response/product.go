@@ -3,16 +3,20 @@ package response
 import (
 	"florist-gin/business/categories"
 	"florist-gin/business/products"
+	"time"
 )
 
 type ProductResponse struct {
-	Id          int                 `json:"id"`
+	Id          uint32              `json:"id"`
 	Name        string              `json:"name"`
 	Description string              `json:"description"`
 	Price       int                 `json:"price"`
 	Stock       int                 `json:"stock"`
-	CategoryId  int                 `json:"categoryId"`
+	FileName    string              `json:"fileName"`
+	CategoryId  uint32              `json:"categoryId"`
 	Category    categories.Category `json:"category"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func FromUsecase(product products.Product) ProductResponse {
@@ -22,7 +26,10 @@ func FromUsecase(product products.Product) ProductResponse {
 		Description: product.Description,
 		Price:       product.Price,
 		Stock:       product.Stock,
+		FileName:    product.FileName,
 		CategoryId:  product.CategoryId,
+		CreatedAt:   product.CreatedAt,
+		UpdatedAt:   product.UpdatedAt,
 	}
 }
 

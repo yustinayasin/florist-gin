@@ -53,13 +53,15 @@ func (controller *CartsProductsController) EditProductFromCart(c *gin.Context) {
 
 	var cartProducts request.CartsProducts
 
-	cartsProductsId, err := strconv.Atoi(c.Param("cartsProductsId"))
+	cartsProductsId, err := strconv.ParseUint(c.Param("cartsProductsId"), 10, 32)
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Carts Products ID must be an integer", err)
 		c.Abort()
 		return
 	}
+
+	parseUint32 := uint32(cartsProductsId)
 
 	err = c.BindJSON(&cartProducts)
 
@@ -68,7 +70,7 @@ func (controller *CartsProductsController) EditProductFromCart(c *gin.Context) {
 		return
 	}
 
-	cartsproducts, errRepo := controller.usecase.EditProductFromCart(*cartProducts.ToUsecase(), cartsProductsId)
+	cartsproducts, errRepo := controller.usecase.EditProductFromCart(*cartProducts.ToUsecase(), parseUint32)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)
@@ -84,7 +86,7 @@ func (controller *CartsProductsController) DeleteProductFromCart(c *gin.Context)
 		return
 	}
 
-	cartsProductsId, err := strconv.Atoi(c.Param("cartsProductsId"))
+	cartsProductsId, err := strconv.ParseUint(c.Param("cartsProductsId"), 10, 32)
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Carts Products ID must be an integer", err)
@@ -92,7 +94,9 @@ func (controller *CartsProductsController) DeleteProductFromCart(c *gin.Context)
 		return
 	}
 
-	cartsproducts, errRepo := controller.usecase.DeleteProductFromCart(cartsProductsId)
+	parseUint32 := uint32(cartsProductsId)
+
+	cartsproducts, errRepo := controller.usecase.DeleteProductFromCart(parseUint32)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)

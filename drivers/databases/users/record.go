@@ -3,18 +3,21 @@ package users
 import (
 	"florist-gin/business/users"
 	types "florist-gin/drivers/databases/type"
+	"time"
 )
 
 type User struct {
-	Id          int `gorm:"primaryKey;unique;autoIncrement:true"`
+	Id          uint32 `gorm:"primaryKey;unique"`
 	Name        string
 	Email       string `gorm:"unique"`
 	Password    string
 	Address     string
 	PhoneNumber string
 	PostalCode  string
-	TypeId      int
+	TypeId      uint32
 	Type        types.Type `gorm:"foreignKey:TypeId"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func (user User) ToUsecase() users.User {
@@ -30,6 +33,8 @@ func (user User) ToUsecase() users.User {
 		PostalCode:  user.PostalCode,
 		TypeId:      user.TypeId,
 		Type:        newType,
+		CreatedAt:   user.CreatedAt,
+		UpdatedAt:   user.UpdatedAt,
 	}
 }
 

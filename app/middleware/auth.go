@@ -13,7 +13,7 @@ import (
 )
 
 type JwtCustomClaims struct {
-	UserId int `json:"id"`
+	UserId uint32 `json:"id"`
 	jwt.MapClaims
 }
 
@@ -29,7 +29,7 @@ type JWTConfig struct {
 }
 
 type GeneratorToken interface {
-	GenerateToken(userId int) string
+	GenerateToken(userId uint32) string
 }
 
 func (jwtConf *ConfigJWT) Init() JWTConfig {
@@ -43,7 +43,7 @@ func (jwtConf *ConfigJWT) Init() JWTConfig {
 	}
 }
 
-func (configJWT ConfigJWT) GenerateToken(userId int) string {
+func (configJWT ConfigJWT) GenerateToken(userId uint32) string {
 	claims := jwt.MapClaims{
 		"userId": userId,
 		"exp":    time.Now().Add(time.Minute * time.Duration(configJWT.ExpiresDuration)).Unix(),
@@ -113,7 +113,7 @@ func RequireAuth(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface user
 
 		// Find the user
 		// Access the "subs" claim and convert it to int
-		subsClaim, ok := claims["userId"].(float64)
+		subsClaim, ok := claims["userId"].(uint32)
 		if !ok {
 			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to parse user ID")
 			c.Abort()
@@ -121,7 +121,7 @@ func RequireAuth(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface user
 		}
 
 		// Convert subsClaim to int
-		subsInt := int(subsClaim)
+		// subsInt := int(subsClaim)
 
 		userUseCase := &users.UserUseCase{
 			Repo: userRepoInterface,
@@ -135,7 +135,7 @@ func RequireAuth(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface user
 			return
 		}
 
-		user, err := userUseCase.GetUser(subsInt)
+		user, err := userUseCase.GetUser(subsClaim)
 		if err != nil {
 			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to fetch user data")
 			c.Abort()
@@ -186,7 +186,7 @@ func RequireAuthAdmin(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface
 
 		// Find the user
 		// Access the "subs" claim and convert it to int
-		subsClaim, ok := claims["userId"].(float64)
+		subsClaim, ok := claims["userId"].(uint32)
 		if !ok {
 			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to parse user ID")
 			c.Abort()
@@ -194,7 +194,7 @@ func RequireAuthAdmin(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface
 		}
 
 		// Convert subsClaim to int
-		subsInt := int(subsClaim)
+		//subsInt := int(subsClaim)
 
 		userUseCase := &users.UserUseCase{
 			Repo: userRepoInterface,
@@ -208,7 +208,7 @@ func RequireAuthAdmin(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface
 			return
 		}
 
-		user, err := userUseCase.GetUser(subsInt)
+		user, err := userUseCase.GetUser(subsClaim)
 
 		if err != nil {
 			utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to fetch user data")

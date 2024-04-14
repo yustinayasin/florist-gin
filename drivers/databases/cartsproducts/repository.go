@@ -29,7 +29,7 @@ func (repo *CartsProductsRepository) AddProductToCart(cartsProducts cartsproduct
 	return cartsProductsDB.ToUseCase(), nil
 }
 
-func (repo *CartsProductsRepository) EditProductFromCart(cartsProducts cartsproducts.CartsProducts, id int) (cartsproducts.CartsProducts, error) {
+func (repo *CartsProductsRepository) EditProductFromCart(cartsProducts cartsproducts.CartsProducts, id uint32) (cartsproducts.CartsProducts, error) {
 	cartsProductsDb := FromUsecase(cartsProducts)
 
 	var newCartsProducts CartsProducts
@@ -51,7 +51,7 @@ func (repo *CartsProductsRepository) EditProductFromCart(cartsProducts cartsprod
 	return newCartsProducts.ToUseCase(), nil
 }
 
-func (repo *CartsProductsRepository) DeleteProductFromCart(id int) (cartsproducts.CartsProducts, error) {
+func (repo *CartsProductsRepository) DeleteProductFromCart(id uint32) (cartsproducts.CartsProducts, error) {
 	var cartsProductsDb CartsProducts
 
 	resultFind := repo.Db.First(&cartsProductsDb, id)

@@ -3,16 +3,20 @@ package products
 import (
 	"florist-gin/business/products"
 	"florist-gin/drivers/databases/categories"
+	"time"
 )
 
 type Product struct {
-	Id          int `gorm:"primaryKey;unique;autoIncrement:true"`
+	Id          uint32 `gorm:"primaryKey;unique"`
 	Name        string
 	Description string
 	Price       int
 	Stock       int
-	CategoryId  int
+	FileName    string
+	CategoryId  uint32
 	Category    categories.Category `gorm:"foreignKey:CategoryId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func (product Product) ToUsecase() products.Product {
@@ -24,8 +28,11 @@ func (product Product) ToUsecase() products.Product {
 		Description: product.Description,
 		Price:       product.Price,
 		Stock:       product.Stock,
+		FileName:    product.FileName,
 		CategoryId:  product.CategoryId,
 		Category:    newCategory,
+		CreatedAt:   product.CreatedAt,
+		UpdatedAt:   product.UpdatedAt,
 	}
 }
 
@@ -47,8 +54,11 @@ func FromUsecase(product products.Product) Product {
 		Description: product.Description,
 		Price:       product.Price,
 		Stock:       product.Stock,
+		FileName:    product.FileName,
 		CategoryId:  product.CategoryId,
 		Category:    newCategory,
+		CreatedAt:   product.CreatedAt,
+		UpdatedAt:   product.UpdatedAt,
 	}
 }
 

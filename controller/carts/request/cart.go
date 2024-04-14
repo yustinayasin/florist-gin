@@ -5,7 +5,7 @@ import (
 )
 
 type Cart struct {
-	UserId int `json:"user_id"`
+	UserId uint32 `json:"user_id"`
 }
 
 func (cart *Cart) ToUsecase() *carts.Cart {

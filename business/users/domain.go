@@ -1,9 +1,12 @@
 package users
 
-import "florist-gin/business/types"
+import (
+	"florist-gin/business/types"
+	"time"
+)
 
 type User struct {
-	Id          int
+	Id          uint32
 	Name        string
 	Email       string
 	Password    string
@@ -11,22 +14,24 @@ type User struct {
 	Address     string
 	PhoneNumber string
 	PostalCode  string
-	TypeId      int
+	TypeId      uint32
 	Type        types.Type
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type UserUseCaseInterface interface {
 	SignUp(user User) (User, error)
 	Login(user User) (User, error)
-	EditUser(user User, id int) (User, error)
-	DeleteUser(id int) (User, error)
-	GetUser(id int) (User, error)
+	EditUser(user User, id uint32) (User, error)
+	DeleteUser(id uint32) (User, error)
+	GetUser(id uint32) (User, error)
 }
 
 type UserRepoInterface interface {
 	SignUp(user User) (User, error)
 	Login(user User) (User, error)
-	EditUser(user User, id int) (User, error)
-	DeleteUser(id int) (User, error)
-	GetUser(id int) (User, error)
+	EditUser(user User, id uint32) (User, error)
+	DeleteUser(id uint32) (User, error)
+	GetUser(id uint32) (User, error)
 }

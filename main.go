@@ -9,6 +9,8 @@ import (
 	"strconv"
 
 	"github.com/joho/godotenv"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"gorm.io/gorm"
 
 	cartsProductsUsecase "florist-gin/business/cartsproducts"
@@ -63,11 +65,25 @@ func main() {
 		ExpiresDuration: expiresDurationInt,
 	}
 
+	endpoint := os.Getenv("MINIO_ENDPOINT")
+	accessKeyID := os.Getenv("MINIO_ACCESS_KEY")
+	secretAccessKey := os.Getenv("MINIO_SECRET_KEY")
+	useSSL := true
+
+	// Initialize minio client object.
+	minioClient, err := minio.New(endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
+		Secure: useSSL,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	userRepoInterface := userRepo.NewUserRepository(db, cartRepo.CartRepository{Db: db})
 	userUseCaseInterface := userUsecase.NewUseCase(userRepoInterface, jwtConf)
 	userControllerInterface := userController.NewUserController(userUseCaseInterface)
 
-	productRepoInterface := productRepo.NewProductRepository(db)
+	productRepoInterface := productRepo.NewProductRepository(db, minioClient)
 	productUseCaseInterface := productUsecase.NewUseCase(productRepoInterface)
 	productControllerInterface := productController.NewProductController(productUseCaseInterface)
 

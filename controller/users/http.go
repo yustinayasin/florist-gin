@@ -80,13 +80,15 @@ func (controller *UserController) EditUser(c *gin.Context) {
 
 	var userEdit request.UserEdit
 
-	userId, err := strconv.Atoi(c.Param("userId"))
+	userId, err := strconv.ParseUint(c.Param("userId"), 10, 32)
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "User ID must be an integer", err)
 		c.Abort()
 		return
 	}
+
+	parseUint32 := uint32(userId)
 
 	err = c.BindJSON(&userEdit)
 
@@ -96,7 +98,7 @@ func (controller *UserController) EditUser(c *gin.Context) {
 	}
 
 	// why pointer to user sign up? kenapa juga to use case di bind ke pointer
-	user, errRepo := controller.usecase.EditUser(*userEdit.ToUsecase(), userId)
+	user, errRepo := controller.usecase.EditUser(*userEdit.ToUsecase(), parseUint32)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)
@@ -112,7 +114,7 @@ func (controller *UserController) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	userId, err := strconv.Atoi(c.Param("userId"))
+	userId, err := strconv.ParseUint(c.Param("userId"), 10, 32)
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "User ID must be an integer", err)
@@ -120,7 +122,9 @@ func (controller *UserController) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	user, errRepo := controller.usecase.DeleteUser(userId)
+	parseUint32 := uint32(userId)
+
+	user, errRepo := controller.usecase.DeleteUser(parseUint32)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)
@@ -136,7 +140,7 @@ func (controller *UserController) GetUser(c *gin.Context) {
 		return
 	}
 
-	userId, err := strconv.Atoi(c.Param("userId"))
+	userId, err := strconv.ParseUint(c.Param("userId"), 10, 32)
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "User ID must be an integer", err)
@@ -144,7 +148,9 @@ func (controller *UserController) GetUser(c *gin.Context) {
 		return
 	}
 
-	user, errRepo := controller.usecase.GetUser(userId)
+	parseUint32 := uint32(userId)
+
+	user, errRepo := controller.usecase.GetUser(parseUint32)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)

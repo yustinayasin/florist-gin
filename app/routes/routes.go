@@ -5,6 +5,7 @@ import (
 	"florist-gin/business/users"
 	cartController "florist-gin/controller/carts"
 	cartsProductsController "florist-gin/controller/cartsproducts"
+	orderController "florist-gin/controller/orders"
 	productController "florist-gin/controller/products"
 	userController "florist-gin/controller/users"
 	"log"
@@ -18,6 +19,7 @@ type RouteControllerList struct {
 	ProductController       productController.ProductController
 	CartController          cartController.CartController
 	CartsProductsController cartsProductsController.CartsProductsController
+	OrderController         orderController.OrderController
 	JWTConfig               *middleware.ConfigJWT
 }
 

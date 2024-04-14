@@ -65,7 +65,7 @@ func (repo *UserRepository) Login(user users.User) (users.User, error) {
 	return userDB.ToUsecase(), nil
 }
 
-func (repo *UserRepository) EditUser(user users.User, id int) (users.User, error) {
+func (repo *UserRepository) EditUser(user users.User, id uint32) (users.User, error) {
 	userDb := FromUsecase(user)
 
 	var newUser User
@@ -88,7 +88,7 @@ func (repo *UserRepository) EditUser(user users.User, id int) (users.User, error
 	return newUser.ToUsecase(), nil
 }
 
-func (repo *UserRepository) DeleteUser(id int) (users.User, error) {
+func (repo *UserRepository) DeleteUser(id uint32) (users.User, error) {
 	var userDb User
 
 	resultFind := repo.Db.First(&userDb, id)
@@ -106,7 +106,7 @@ func (repo *UserRepository) DeleteUser(id int) (users.User, error) {
 	return userDb.ToUsecase(), nil
 }
 
-func (repo *UserRepository) GetUser(id int) (users.User, error) {
+func (repo *UserRepository) GetUser(id uint32) (users.User, error) {
 	var userDb User
 
 	resultFind := repo.Db.First(&userDb, id)

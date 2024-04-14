@@ -29,6 +29,10 @@ import (
 	cartUsecase "florist-gin/business/carts"
 	cartController "florist-gin/controller/carts"
 	cartRepo "florist-gin/drivers/databases/carts"
+
+	orderUsecase "florist-gin/business/orders"
+	orderController "florist-gin/controller/orders"
+	orderRepo "florist-gin/drivers/databases/orders"
 )
 
 func dbMigrate(db *gorm.DB) {
@@ -38,6 +42,7 @@ func dbMigrate(db *gorm.DB) {
 		&cartRepo.Cart{},
 		&productRepo.Product{},
 		&cartsProductsRepo.CartsProducts{},
+		&orderRepo.Order{},
 	)
 }
 
@@ -95,11 +100,16 @@ func main() {
 	cartsProductsUseCaseInterface := cartsProductsUsecase.NewUseCase(cartsProductsRepoInterface)
 	cartsProductsControllerInterface := cartsProductsController.NewCartsProductsController(cartsProductsUseCaseInterface)
 
+	orderRepoInterface := orderRepo.NewOrderRepository(db)
+	orderUseCaseInterface := orderUsecase.NewUseCase(orderRepoInterface)
+	orderControllerInterface := orderController.NewOrderController(orderUseCaseInterface)
+
 	routesInit := routes.RouteControllerList{
 		UserController:          *userControllerInterface,
 		ProductController:       *productControllerInterface,
 		CartController:          *cartControllerInterface,
 		CartsProductsController: *cartsProductsControllerInterface,
+		OrderController:         *orderControllerInterface,
 		JWTConfig:               &jwtConf,
 	}
 

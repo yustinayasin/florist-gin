@@ -5,7 +5,6 @@ import (
 	"florist-gin/business/users"
 	"florist-gin/drivers/databases/carts"
 	"florist-gin/helpers"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -47,7 +46,7 @@ func (repo *UserRepository) SignUp(user users.User) (users.User, error) {
 func (repo *UserRepository) Login(user users.User) (users.User, error) {
 	userDB := FromUsecase(user)
 
-	result := repo.Db.Where("email = ?", userDB.Email).First(&userDB)
+	result := repo.Db.Where("email = ?", userDB.Email).Preload("Type").First(&userDB)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -65,30 +64,32 @@ func (repo *UserRepository) Login(user users.User) (users.User, error) {
 	return userDB.ToUsecase(), nil
 }
 
-func (repo *UserRepository) EditUser(user users.User, id uint32) (users.User, error) {
+func (repo *UserRepository) EditUser(user users.User, id int) (users.User, error) {
 	userDb := FromUsecase(user)
 
 	var newUser User
 
-	result := repo.Db.First(&newUser, id)
+	result := repo.Db.Preload("Type").First(&newUser, id)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return users.User{}, errors.New("User not found")
 		}
-		fmt.Println(result.Error)
 		return users.User{}, errors.New("error in database")
 	}
 
 	newUser.Email = userDb.Email
 	newUser.Password = userDb.Password
 	newUser.Name = userDb.Name
+	newUser.Address = userDb.Address
+	newUser.PhoneNumber = userDb.PhoneNumber
+	newUser.PostalCode = userDb.PostalCode
 
 	repo.Db.Save(&newUser)
 	return newUser.ToUsecase(), nil
 }
 
-func (repo *UserRepository) DeleteUser(id uint32) (users.User, error) {
+func (repo *UserRepository) DeleteUser(id int) (users.User, error) {
 	var userDb User
 
 	resultFind := repo.Db.First(&userDb, id)
@@ -106,7 +107,7 @@ func (repo *UserRepository) DeleteUser(id uint32) (users.User, error) {
 	return userDb.ToUsecase(), nil
 }
 
-func (repo *UserRepository) GetUser(id uint32) (users.User, error) {
+func (repo *UserRepository) GetUser(id int) (users.User, error) {
 	var userDb User
 
 	resultFind := repo.Db.First(&userDb, id)

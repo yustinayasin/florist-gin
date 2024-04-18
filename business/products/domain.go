@@ -2,19 +2,20 @@ package products
 
 import (
 	"florist-gin/business/categories"
-	"mime/multipart"
+	"net/url"
 	"time"
 )
 
 type Product struct {
-	Id          uint32
+	Id          int
 	Name        string
 	Description string
 	Price       int
 	Stock       int
 	FileName    string
-	File        multipart.File
-	CategoryId  uint32
+	File        []byte
+	FileUrl     *url.URL
+	CategoryId  int
 	Category    categories.Category
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -22,14 +23,14 @@ type Product struct {
 
 type ProductUseCaseInterface interface {
 	AddProduct(product Product) (Product, error)
-	EditProduct(product Product, id uint32) (Product, error)
-	DeleteProduct(id uint32) (Product, error)
-	GetProductDetail(id uint32) (Product, error)
+	EditProduct(product Product, id int) (Product, error)
+	DeleteProduct(id int) (Product, error)
+	GetProductDetail(id int) (Product, error)
 }
 
 type ProductRepoInterface interface {
 	AddProduct(product Product) (Product, error)
-	EditProduct(product Product, id uint32) (Product, error)
-	DeleteProduct(id uint32) (Product, error)
-	GetProductDetail(id uint32) (Product, error)
+	EditProduct(product Product, id int) (Product, error)
+	DeleteProduct(id int) (Product, error)
+	GetProductDetail(id int) (Product, error)
 }

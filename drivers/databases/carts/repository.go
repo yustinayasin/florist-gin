@@ -17,7 +17,7 @@ func NewCartRepository(database *gorm.DB) carts.CartRepoInterface {
 	}
 }
 
-func (repo *CartRepository) GetCart(id uint32) (carts.Cart, error) {
+func (repo *CartRepository) GetCart(id int) (carts.Cart, error) {
 	var cartDb Cart
 
 	resultFind := repo.Db.Model(&Cart{}).Preload("Product").First(&cartDb, id)

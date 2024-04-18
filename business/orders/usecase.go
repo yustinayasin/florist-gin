@@ -36,7 +36,7 @@ func (orderUseCase *OrderUseCase) AddOrder(order Order) (Order, error) {
 	return orderRepo, nil
 }
 
-func (orderUseCase *OrderUseCase) EditOrder(order Order, id uint32) (Order, error) {
+func (orderUseCase *OrderUseCase) EditOrder(order Order, id int) (Order, error) {
 	if id == 0 {
 		return Order{}, errors.New("order ID cannot be empty")
 	}
@@ -50,7 +50,7 @@ func (orderUseCase *OrderUseCase) EditOrder(order Order, id uint32) (Order, erro
 	return orderRepo, nil
 }
 
-func (orderUseCase *OrderUseCase) DeleteOrder(id uint32) (Order, error) {
+func (orderUseCase *OrderUseCase) DeleteOrder(id int) (Order, error) {
 	if id == 0 {
 		return Order{}, errors.New("order ID cannot be empty")
 	}
@@ -64,7 +64,7 @@ func (orderUseCase *OrderUseCase) DeleteOrder(id uint32) (Order, error) {
 	return orderRepo, nil
 }
 
-func (orderUseCase *OrderUseCase) GetOrderDetail(id uint32) (Order, error) {
+func (orderUseCase *OrderUseCase) GetOrderDetail(id int) (Order, error) {
 	if id == 0 {
 		return Order{}, errors.New("order ID cannot be empty")
 	}

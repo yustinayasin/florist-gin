@@ -73,15 +73,16 @@ func main() {
 	endpoint := os.Getenv("MINIO_ENDPOINT")
 	accessKeyID := os.Getenv("MINIO_ACCESS_KEY")
 	secretAccessKey := os.Getenv("MINIO_SECRET_KEY")
-	useSSL := true
+	useSSL := false
 
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 		Secure: useSSL,
 	})
+
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("Error initialize minio client: ", err)
 	}
 
 	userRepoInterface := userRepo.NewUserRepository(db, cartRepo.CartRepository{Db: db})

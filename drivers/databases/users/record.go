@@ -7,14 +7,14 @@ import (
 )
 
 type User struct {
-	Id          uint32 `gorm:"primaryKey;unique"`
+	Id          int `gorm:"primaryKey;unique"`
 	Name        string
 	Email       string `gorm:"unique"`
 	Password    string
 	Address     string
 	PhoneNumber string
 	PostalCode  string
-	TypeId      uint32
+	TypeId      int
 	Type        types.Type `gorm:"foreignKey:TypeId"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -60,5 +60,7 @@ func FromUsecase(user users.User) User {
 		PostalCode:  user.PostalCode,
 		TypeId:      user.TypeId,
 		Type:        newType,
+		CreatedAt:   user.CreatedAt,
+		UpdatedAt:   user.UpdatedAt,
 	}
 }

@@ -1,9 +1,13 @@
 package products
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"florist-gin/business/products"
+	"fmt"
+	"net/url"
+	"time"
 
 	minio "github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
@@ -26,7 +30,11 @@ func (repo *ProductRepository) AddProduct(product products.Product) (products.Pr
 
 	ctx := context.Background()
 
-	_, err := repo.MinioClient.PutObject(ctx, "florist", "florist/products/"+product.FileName, product.File, -1, minio.PutObjectOptions{})
+	file := bytes.NewReader(product.File)
+
+	_, err := repo.MinioClient.PutObject(ctx, "florist", "products/"+product.FileName, file, -1, minio.PutObjectOptions{
+		ContentType: "image/jpeg",
+	})
 
 	if err != nil {
 		return products.Product{}, err
@@ -41,7 +49,7 @@ func (repo *ProductRepository) AddProduct(product products.Product) (products.Pr
 	return productDB.ToUsecase(), nil
 }
 
-func (repo *ProductRepository) EditProduct(product products.Product, id uint32) (products.Product, error) {
+func (repo *ProductRepository) EditProduct(product products.Product, id int) (products.Product, error) {
 	productDb := FromUsecase(product)
 
 	var newProduct Product
@@ -57,13 +65,17 @@ func (repo *ProductRepository) EditProduct(product products.Product, id uint32) 
 
 	ctx := context.Background()
 
-	errRemove := repo.MinioClient.RemoveObject(ctx, "florist", "florist/products/"+newProduct.FileName, minio.RemoveObjectOptions{})
+	errRemove := repo.MinioClient.RemoveObject(ctx, "florist", "products/"+newProduct.FileName, minio.RemoveObjectOptions{})
 
 	if errRemove != nil {
 		return products.Product{}, errRemove
 	}
 
-	_, err := repo.MinioClient.PutObject(ctx, "florist", "florist/products/"+productDb.FileName, product.File, -1, minio.PutObjectOptions{})
+	file := bytes.NewReader(product.File)
+
+	_, err := repo.MinioClient.PutObject(ctx, "florist", "products/"+productDb.FileName, file, -1, minio.PutObjectOptions{
+		ContentType: "image/jpeg",
+	})
 
 	if err != nil {
 		return products.Product{}, err
@@ -80,7 +92,7 @@ func (repo *ProductRepository) EditProduct(product products.Product, id uint32) 
 	return newProduct.ToUsecase(), nil
 }
 
-func (repo *ProductRepository) DeleteProduct(id uint32) (products.Product, error) {
+func (repo *ProductRepository) DeleteProduct(id int) (products.Product, error) {
 	var productDb Product
 
 	resultFind := repo.Db.First(&productDb, id)
@@ -91,7 +103,7 @@ func (repo *ProductRepository) DeleteProduct(id uint32) (products.Product, error
 
 	ctx := context.Background()
 
-	errRemove := repo.MinioClient.RemoveObject(ctx, "florist", "florist/products/"+productDb.FileName, minio.RemoveObjectOptions{})
+	errRemove := repo.MinioClient.RemoveObject(ctx, "florist", "products/"+productDb.FileName, minio.RemoveObjectOptions{})
 
 	if errRemove != nil {
 		return products.Product{}, errRemove
@@ -106,26 +118,33 @@ func (repo *ProductRepository) DeleteProduct(id uint32) (products.Product, error
 	return productDb.ToUsecase(), nil
 }
 
-func (repo *ProductRepository) GetProductDetail(id uint32) (products.Product, error) {
+func (repo *ProductRepository) GetProductDetail(id int) (products.Product, error) {
 	var productDb Product
 
 	resultFind := repo.Db.Preload("Category").First(&productDb, id)
 
 	if resultFind.Error != nil {
-		return products.Product{}, errors.New("Product not found")
+		return products.Product{}, errors.New("product not found")
 	}
 
 	ctx := context.Background()
 
-	object, err := repo.MinioClient.GetObject(ctx, "florist", "florist/products/"+productDb.FileName, minio.GetObjectOptions{})
+	// Set request parameters for content-disposition.
+	reqParams := make(url.Values)
+	// reqParams.Set("response-content-disposition", "inline")
+
+	// Generates a presigned url which expires in a day.
+	presignedURL, err := repo.MinioClient.PresignedGetObject(ctx, "florist", "products/"+productDb.FileName, time.Second*24*60*60, reqParams)
 
 	if err != nil {
 		return products.Product{}, err
 	}
 
+	fmt.Println("url repo", presignedURL)
+
 	productUC := productDb.ToUsecase()
 
-	productUC.File = object
+	productUC.FileUrl = presignedURL
 
 	return productUC, nil
 }

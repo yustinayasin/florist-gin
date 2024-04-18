@@ -5,9 +5,9 @@ import (
 )
 
 type CartsProducts struct {
-	CartId    uint32 `json:"cartId"`
-	ProductId uint32 `json:"productId"`
-	Quantity  int    `json:"quantity"`
+	CartId    int `form:"cartId"`
+	ProductId int `form:"productId"`
+	Quantity  int `form:"quantity"`
 }
 
 func (cartsProducts *CartsProducts) ToUsecase() *cartsproducts.CartsProducts {

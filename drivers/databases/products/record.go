@@ -7,13 +7,13 @@ import (
 )
 
 type Product struct {
-	Id          uint32 `gorm:"primaryKey;unique"`
+	Id          int `gorm:"primaryKey;unique"`
 	Name        string
 	Description string
 	Price       int
 	Stock       int
 	FileName    string
-	CategoryId  uint32
+	CategoryId  int
 	Category    categories.Category `gorm:"foreignKey:CategoryId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time

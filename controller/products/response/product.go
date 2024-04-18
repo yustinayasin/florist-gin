@@ -7,14 +7,15 @@ import (
 )
 
 type ProductResponse struct {
-	Id          uint32              `json:"id"`
-	Name        string              `json:"name"`
-	Description string              `json:"description"`
-	Price       int                 `json:"price"`
-	Stock       int                 `json:"stock"`
-	FileName    string              `json:"fileName"`
-	CategoryId  uint32              `json:"categoryId"`
-	Category    categories.Category `json:"category"`
+	Id          int    `form:"id"`
+	Name        string `form:"name"`
+	Description string `form:"description"`
+	Price       int    `form:"price"`
+	Stock       int    `form:"stock"`
+	FileName    string `form:"fileName"`
+	FileUrl     string
+	CategoryId  int                 `form:"categoryId"`
+	Category    categories.Category `form:"category"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -27,6 +28,7 @@ func FromUsecase(product products.Product) ProductResponse {
 		Price:       product.Price,
 		Stock:       product.Stock,
 		FileName:    product.FileName,
+		FileUrl:     product.FileUrl.String(),
 		CategoryId:  product.CategoryId,
 		CreatedAt:   product.CreatedAt,
 		UpdatedAt:   product.UpdatedAt,

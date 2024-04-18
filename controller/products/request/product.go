@@ -2,17 +2,16 @@ package request
 
 import (
 	"florist-gin/business/products"
-	"mime/multipart"
 )
 
 type Product struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Price       int    `json:"price"`
-	Stock       int    `json:"stock"`
+	Name        string `form:"name"`
+	Description string `form:"description"`
+	Price       int    `form:"price"`
+	Stock       int    `form:"stock"`
 	FileName    string
-	File        multipart.File
-	CategoryId  uint32 `json:"categoryId"`
+	File        []byte
+	CategoryId  int `form:"categoryId"`
 }
 
 func (product *Product) ToUsecase() *products.Product {

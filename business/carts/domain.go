@@ -6,17 +6,17 @@ import (
 )
 
 type Cart struct {
-	Id        uint32
-	UserId    uint32
+	Id        int
+	UserId    int
 	Product   []products.Product
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
 type CartUseCaseInterface interface {
-	GetCart(id uint32) (Cart, error)
+	GetCart(id int) (Cart, error)
 }
 
 type CartRepoInterface interface {
-	GetCart(id uint32) (Cart, error)
+	GetCart(id int) (Cart, error)
 }

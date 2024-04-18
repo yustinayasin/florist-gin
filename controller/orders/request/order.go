@@ -6,10 +6,10 @@ import (
 )
 
 type Order struct {
-	Status     bool      `json:"status"`
-	Date       time.Time `json:"time"`
-	TotalPrice int       `json:"totalPrice"`
-	UserId     uint32    `json:"userId"`
+	Status     bool      `form:"status"`
+	Date       time.Time `form:"time"`
+	TotalPrice int       `form:"totalPrice"`
+	UserId     int       `form:"userId"`
 }
 
 func (order *Order) ToUsecase() *orders.Order {

@@ -28,7 +28,7 @@ func (controller *OrderController) AddOrder(c *gin.Context) {
 
 	var orderAdd request.Order
 
-	err := c.BindJSON(&orderAdd)
+	err := c.Bind(&orderAdd)
 
 	if err != nil {
 		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "Error binding the order data")
@@ -61,9 +61,9 @@ func (controller *OrderController) EditOrder(c *gin.Context) {
 		return
 	}
 
-	parseUint32 := uint32(orderId)
+	parseUint32 := int(orderId)
 
-	err = c.BindJSON(&orderEdit)
+	err = c.Bind(&orderEdit)
 
 	if err != nil {
 		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "Error binding the order data")
@@ -94,7 +94,7 @@ func (controller *OrderController) DeleteOrder(c *gin.Context) {
 		return
 	}
 
-	parseUint32 := uint32(orderId)
+	parseUint32 := int(orderId)
 
 	order, errRepo := controller.usecase.DeleteOrder(parseUint32)
 
@@ -120,7 +120,7 @@ func (controller *OrderController) GetOrderDetail(c *gin.Context) {
 		return
 	}
 
-	parseUint32 := uint32(orderId)
+	parseUint32 := int(orderId)
 
 	order, errRepo := controller.usecase.GetOrderDetail(parseUint32)
 

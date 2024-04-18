@@ -12,7 +12,7 @@ func NewUseCase(cartRepo CartRepoInterface) CartUseCaseInterface {
 	}
 }
 
-func (cartUseCase *CartUseCase) GetCart(id uint32) (Cart, error) {
+func (cartUseCase *CartUseCase) GetCart(id int) (Cart, error) {
 	if id == 0 {
 		return Cart{}, errors.New("cart ID cannot be empty")
 	}

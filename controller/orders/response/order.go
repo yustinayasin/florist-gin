@@ -7,12 +7,12 @@ import (
 )
 
 type OrderResponse struct {
-	Id         uint32     `json:"id"`
-	Status     bool       `json:"status"`
-	Date       time.Time  `json:"time"`
-	TotalPrice int        `json:"totalPrice"`
-	UserId     uint32     `json:"userId"`
-	User       users.User `json:"user"`
+	Id         int        `form:"id"`
+	Status     bool       `form:"status"`
+	Date       time.Time  `form:"time"`
+	TotalPrice int        `form:"totalPrice"`
+	UserId     int        `form:"userId"`
+	User       users.User `form:"user"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

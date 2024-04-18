@@ -3,7 +3,7 @@ package types
 import "florist-gin/business/types"
 
 type Type struct {
-	Id   uint32 `gorm:"primaryKey;unique"`
+	Id   int `gorm:"primaryKey;unique"`
 	Name string
 }
 

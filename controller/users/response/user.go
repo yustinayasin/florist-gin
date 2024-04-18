@@ -7,16 +7,16 @@ import (
 )
 
 type UserResponse struct {
-	Id          uint32     `json:"id"`
-	Email       string     `json:"email"`
-	Name        string     `json:"name"`
-	Password    string     `json:"password"`
-	Address     string     `json:"address"`
-	PhoneNumber string     `json:"phoneNumber"`
-	PostalCode  string     `json:"postalCode"`
-	Token       string     `json:"token"`
-	TypeId      uint32     `json:"typeID"`
-	Type        types.Type `json:"type"`
+	Id          int        `form:"id"`
+	Email       string     `form:"email"`
+	Name        string     `form:"name"`
+	Password    string     `form:"password"`
+	Address     string     `form:"address"`
+	PhoneNumber string     `form:"phoneNumber"`
+	PostalCode  string     `form:"postalCode"`
+	Token       string     `form:"token"`
+	TypeId      int        `form:"typeID"`
+	Type        types.Type `form:"type"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }

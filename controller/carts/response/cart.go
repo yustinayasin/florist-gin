@@ -7,8 +7,8 @@ import (
 )
 
 type CartResponse struct {
-	Id        uint32 `json:"id"`
-	UserId    uint32 `json:"user_id"`
+	Id        int `form:"id"`
+	UserId    int `form:"user_id"`
 	Product   []products.Product
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -16,9 +16,11 @@ type CartResponse struct {
 
 func FromUsecase(cart carts.Cart) CartResponse {
 	return CartResponse{
-		Id:      cart.Id,
-		UserId:  cart.UserId,
-		Product: cart.Product,
+		Id:        cart.Id,
+		UserId:    cart.UserId,
+		Product:   cart.Product,
+		CreatedAt: cart.CreatedAt,
+		UpdatedAt: cart.UpdatedAt,
 	}
 }
 

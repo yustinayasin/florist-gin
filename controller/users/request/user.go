@@ -3,17 +3,17 @@ package request
 import "florist-gin/business/users"
 
 type UserLogin struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `form:"email"`
+	Password string `form:"password"`
 }
 
 type UserEdit struct {
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	Address     string `json:"address"`
-	PhoneNumber string `json:"phoneNumber"`
-	PostalCode  string `json:"postalCode"`
+	Name        string `form:"name"`
+	Email       string `form:"email"`
+	Password    string `form:"password"`
+	Address     string `form:"address"`
+	PhoneNumber string `form:"phoneNumber"`
+	PostalCode  string `form:"postalCode"`
 }
 
 func (user *UserLogin) ToUsecase() *users.User {

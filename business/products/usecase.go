@@ -48,7 +48,7 @@ func (productUseCase *ProductUseCase) AddProduct(product Product) (Product, erro
 	return productRepo, nil
 }
 
-func (productUseCase *ProductUseCase) EditProduct(product Product, id uint32) (Product, error) {
+func (productUseCase *ProductUseCase) EditProduct(product Product, id int) (Product, error) {
 	if id == 0 {
 		return Product{}, errors.New("product ID cannot be empty")
 	}
@@ -86,7 +86,7 @@ func (productUseCase *ProductUseCase) EditProduct(product Product, id uint32) (P
 	return productRepo, nil
 }
 
-func (productUseCase *ProductUseCase) DeleteProduct(id uint32) (Product, error) {
+func (productUseCase *ProductUseCase) DeleteProduct(id int) (Product, error) {
 	if id == 0 {
 		return Product{}, errors.New("product ID cannot be empty")
 	}
@@ -100,7 +100,7 @@ func (productUseCase *ProductUseCase) DeleteProduct(id uint32) (Product, error) 
 	return productRepo, nil
 }
 
-func (productUseCase *ProductUseCase) GetProductDetail(id uint32) (Product, error) {
+func (productUseCase *ProductUseCase) GetProductDetail(id int) (Product, error) {
 	if id == 0 {
 		return Product{}, errors.New("product ID cannot be empty")
 	}

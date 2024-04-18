@@ -26,13 +26,14 @@ func (controller *CartController) GetCart(c *gin.Context) {
 	}
 
 	cartId, err := strconv.ParseUint(c.Param("cartId"), 10, 32)
-	paramUint32 := uint32(cartId)
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Cart ID must be an integer", err)
 		c.Abort()
 		return
 	}
+
+	paramUint32 := int(cartId)
 
 	cart, errRepo := controller.usecase.GetCart(paramUint32)
 

@@ -4,6 +4,7 @@ import (
 	"florist-gin/business/users"
 	"florist-gin/controller/users/request"
 	"florist-gin/utils"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -29,7 +30,9 @@ func (controller *UserController) SignUp(c *gin.Context) {
 
 	var userSignUp request.UserEdit
 
-	err := c.BindJSON(&userSignUp)
+	err := c.Bind(&userSignUp)
+
+	fmt.Println(userSignUp)
 
 	if err != nil {
 		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "Error binding the user data")
@@ -55,7 +58,7 @@ func (controller *UserController) Login(c *gin.Context) {
 
 	var userLogin request.UserLogin
 
-	err := c.BindJSON(&userLogin)
+	err := c.Bind(&userLogin)
 
 	if err != nil {
 		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "Error binding the user data")
@@ -80,7 +83,7 @@ func (controller *UserController) EditUser(c *gin.Context) {
 
 	var userEdit request.UserEdit
 
-	userId, err := strconv.ParseUint(c.Param("userId"), 10, 32)
+	userId, err := strconv.Atoi(c.Param("userId"))
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "User ID must be an integer", err)
@@ -88,9 +91,9 @@ func (controller *UserController) EditUser(c *gin.Context) {
 		return
 	}
 
-	parseUint32 := uint32(userId)
+	parseUint32 := int(userId)
 
-	err = c.BindJSON(&userEdit)
+	err = c.Bind(&userEdit)
 
 	if err != nil {
 		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "Error binding the user data")
@@ -114,7 +117,7 @@ func (controller *UserController) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	userId, err := strconv.ParseUint(c.Param("userId"), 10, 32)
+	userId, err := strconv.Atoi(c.Param("userId"))
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "User ID must be an integer", err)
@@ -122,7 +125,7 @@ func (controller *UserController) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	parseUint32 := uint32(userId)
+	parseUint32 := int(userId)
 
 	user, errRepo := controller.usecase.DeleteUser(parseUint32)
 
@@ -140,7 +143,7 @@ func (controller *UserController) GetUser(c *gin.Context) {
 		return
 	}
 
-	userId, err := strconv.ParseUint(c.Param("userId"), 10, 32)
+	userId, err := strconv.Atoi(c.Param("userId"))
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "User ID must be an integer", err)
@@ -148,7 +151,7 @@ func (controller *UserController) GetUser(c *gin.Context) {
 		return
 	}
 
-	parseUint32 := uint32(userId)
+	parseUint32 := int(userId)
 
 	user, errRepo := controller.usecase.GetUser(parseUint32)
 

@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	Id          uint32
+	Id          int
 	Name        string
 	Email       string
 	Password    string
@@ -14,7 +14,7 @@ type User struct {
 	Address     string
 	PhoneNumber string
 	PostalCode  string
-	TypeId      uint32
+	TypeId      int
 	Type        types.Type
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -23,15 +23,15 @@ type User struct {
 type UserUseCaseInterface interface {
 	SignUp(user User) (User, error)
 	Login(user User) (User, error)
-	EditUser(user User, id uint32) (User, error)
-	DeleteUser(id uint32) (User, error)
-	GetUser(id uint32) (User, error)
+	EditUser(user User, id int) (User, error)
+	DeleteUser(id int) (User, error)
+	GetUser(id int) (User, error)
 }
 
 type UserRepoInterface interface {
 	SignUp(user User) (User, error)
 	Login(user User) (User, error)
-	EditUser(user User, id uint32) (User, error)
-	DeleteUser(id uint32) (User, error)
-	GetUser(id uint32) (User, error)
+	EditUser(user User, id int) (User, error)
+	DeleteUser(id int) (User, error)
+	GetUser(id int) (User, error)
 }

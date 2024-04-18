@@ -1,6 +1,6 @@
 package types
 
 type Type struct {
-	Id   uint32
+	Id   int
 	Name string
 }

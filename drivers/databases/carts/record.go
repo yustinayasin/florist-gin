@@ -7,8 +7,8 @@ import (
 )
 
 type Cart struct {
-	Id        uint32             `gorm:"primaryKey;unique"`
-	UserId    uint32             `gorm:"unique"`
+	Id        int                `gorm:"primaryKey;unique"`
+	UserId    int                `gorm:"unique"`
 	Product   []products.Product `gorm:"many2many:CartsProducts;"`
 	CreatedAt time.Time
 	UpdatedAt time.Time

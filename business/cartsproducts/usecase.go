@@ -36,7 +36,7 @@ func (cartsProductsUseCase *CartsProductsUseCase) AddProductToCart(cartsproducts
 	return userRepo, nil
 }
 
-func (cartsProductsUseCase *CartsProductsUseCase) EditProductFromCart(cartsproducts CartsProducts, id uint32) (CartsProducts, error) {
+func (cartsProductsUseCase *CartsProductsUseCase) EditProductFromCart(cartsproducts CartsProducts, id int) (CartsProducts, error) {
 	if id == 0 {
 		return CartsProducts{}, errors.New("carts products ID cannot be empty")
 	}
@@ -62,7 +62,7 @@ func (cartsProductsUseCase *CartsProductsUseCase) EditProductFromCart(cartsprodu
 	return cartsProductsRepo, nil
 }
 
-func (cartsProductsUseCase *CartsProductsUseCase) DeleteProductFromCart(id uint32) (CartsProducts, error) {
+func (cartsProductsUseCase *CartsProductsUseCase) DeleteProductFromCart(id int) (CartsProducts, error) {
 	if id == 0 {
 		return CartsProducts{}, errors.New("carts products ID cannot be empty")
 	}

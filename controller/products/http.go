@@ -1,10 +1,13 @@
 package controllers
 
 import (
+	"encoding/base64"
 	"florist-gin/business/products"
 	"florist-gin/controller/products/request"
+	"florist-gin/controller/products/response"
 	"florist-gin/utils"
 	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -36,6 +39,21 @@ func (controller *ProductController) AddProduct(c *gin.Context) {
 		return
 	}
 
+	// Open the file
+	photo, err := file.Open()
+	if err != nil {
+		utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to open file")
+		return
+	}
+	defer photo.Close()
+
+	// Read the file content into a byte slice
+	photoData, err := io.ReadAll(photo)
+	if err != nil {
+		utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to read file content")
+		return
+	}
+
 	// Specify the maximum file size (in bytes)
 	maxFileSize := int64(10 * 1024 * 1024) // 10 MB
 
@@ -61,7 +79,7 @@ func (controller *ProductController) AddProduct(c *gin.Context) {
 
 	var productAddProduct request.Product
 
-	err := c.BindJSON(&productAddProduct)
+	err = c.Bind(&productAddProduct)
 
 	if err != nil {
 		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "Error binding the product data")
@@ -69,14 +87,18 @@ func (controller *ProductController) AddProduct(c *gin.Context) {
 	}
 
 	productAddProduct.FileName = uniqueFileName
-	productAddProduct.File = fileReader
+	productAddProduct.File = photoData
 
 	product, errRepo := controller.usecase.AddProduct(*productAddProduct.ToUsecase())
 
 	if errRepo != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in reposss", errRepo)
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)
 		return
 	}
+
+	encodedImage := base64.StdEncoding.EncodeToString(product.File)
+
+	product.File = []byte(encodedImage)
 
 	utils.SuccessResponse(c, product, []string{"Product successfully created"})
 }
@@ -87,9 +109,54 @@ func (controller *ProductController) EditProduct(c *gin.Context) {
 		return
 	}
 
+	// Retrieve the file from the form data
+	file, errPhoto := c.FormFile("photo")
+	if errPhoto != nil {
+		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "No file uploaded")
+		return
+	}
+
+	// Open the file
+	photo, err := file.Open()
+	if err != nil {
+		utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to open file")
+		return
+	}
+	defer photo.Close()
+
+	// Read the file content into a byte slice
+	photoData, err := io.ReadAll(photo)
+	if err != nil {
+		utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to read file content")
+		return
+	}
+
+	// Specify the maximum file size (in bytes)
+	maxFileSize := int64(10 * 1024 * 1024) // 10 MB
+
+	// Check if the file size exceeds the maximum size
+	if file.Size > maxFileSize {
+		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "File size exceeds the maximum allowed size")
+		return
+	}
+
+	// Retrieve the file name from the file header
+	fileName := file.Filename
+
+	// Create a unique file name to avoid overwriting existing files
+	uniqueFileName := fmt.Sprintf("%s-%d%s", fileName[:len(fileName)-len(filepath.Ext(fileName))], time.Now().UnixNano(), filepath.Ext(fileName))
+
+	fileReader, errOpenFile := file.Open()
+
+	if errOpenFile != nil {
+		utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to open file")
+		return
+	}
+	defer fileReader.Close()
+
 	var productEdit request.Product
 
-	productId, err := strconv.ParseUint(c.Param("productId"), 10, 32)
+	productId, err := strconv.Atoi(c.Param("productId"))
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Product ID must be an integer", err)
@@ -97,21 +164,26 @@ func (controller *ProductController) EditProduct(c *gin.Context) {
 		return
 	}
 
-	parseUint32 := uint32(productId)
-
-	err = c.BindJSON(&productEdit)
+	err = c.Bind(&productEdit)
 
 	if err != nil {
 		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "Error binding the product data")
 		return
 	}
 
-	product, errRepo := controller.usecase.EditProduct(*productEdit.ToUsecase(), parseUint32)
+	productEdit.FileName = uniqueFileName
+	productEdit.File = photoData
+
+	product, errRepo := controller.usecase.EditProduct(*productEdit.ToUsecase(), productId)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)
 		return
 	}
+
+	encodedImage := base64.StdEncoding.EncodeToString(product.File)
+
+	product.File = []byte(encodedImage)
 
 	utils.SuccessResponse(c, product, []string{"Product successfully edited"})
 }
@@ -122,7 +194,7 @@ func (controller *ProductController) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	productId, err := strconv.ParseUint(c.Param("productId"), 10, 32)
+	productId, err := strconv.Atoi(c.Param("productId"))
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Product ID must be an integer", err)
@@ -130,7 +202,7 @@ func (controller *ProductController) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	parseUint32 := uint32(productId)
+	parseUint32 := int(productId)
 
 	product, errRepo := controller.usecase.DeleteProduct(parseUint32)
 
@@ -148,7 +220,7 @@ func (controller *ProductController) GetProductDetail(c *gin.Context) {
 		return
 	}
 
-	productId, err := strconv.ParseUint(c.Param("productId"), 10, 32)
+	productId, err := strconv.Atoi(c.Param("productId"))
 
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Product ID must be an integer", err)
@@ -156,14 +228,14 @@ func (controller *ProductController) GetProductDetail(c *gin.Context) {
 		return
 	}
 
-	parseUint32 := uint32(productId)
-
-	product, errRepo := controller.usecase.GetProductDetail(parseUint32)
+	product, errRepo := controller.usecase.GetProductDetail(productId)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)
 		return
 	}
 
-	utils.SuccessResponse(c, product, []string{"Successfully get product"})
+	productResponse := response.FromUsecase(product)
+
+	utils.SuccessResponse(c, productResponse, []string{"Successfully get product"})
 }

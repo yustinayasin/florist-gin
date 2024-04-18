@@ -7,7 +7,7 @@ import (
 )
 
 type GeneratorToken interface {
-	GenerateToken(userId uint32) string
+	GenerateToken(userId int) string
 }
 
 type UserUseCase struct {
@@ -78,7 +78,7 @@ func (userUseCase *UserUseCase) Login(user User) (User, error) {
 	return userRepo, nil
 }
 
-func (userUseCase *UserUseCase) EditUser(user User, id uint32) (User, error) {
+func (userUseCase *UserUseCase) EditUser(user User, id int) (User, error) {
 	if id == 0 {
 		return User{}, errors.New("user ID cannot be empty")
 	}
@@ -95,6 +95,18 @@ func (userUseCase *UserUseCase) EditUser(user User, id uint32) (User, error) {
 		return User{}, errors.New("password cannot be empty")
 	}
 
+	if user.Address == "" {
+		return User{}, errors.New("address cannot be empty")
+	}
+
+	if user.PostalCode == "" {
+		return User{}, errors.New("postal code cannot be empty")
+	}
+
+	if user.PhoneNumber == "" {
+		return User{}, errors.New("phone number cannot be empty")
+	}
+
 	hash, _ := helpers.HashPassword(user.Password)
 	user.Password = hash
 
@@ -107,7 +119,7 @@ func (userUseCase *UserUseCase) EditUser(user User, id uint32) (User, error) {
 	return userRepo, nil
 }
 
-func (userUseCase *UserUseCase) DeleteUser(id uint32) (User, error) {
+func (userUseCase *UserUseCase) DeleteUser(id int) (User, error) {
 	if id == 0 {
 		return User{}, errors.New("user ID cannot be empty")
 	}
@@ -121,7 +133,7 @@ func (userUseCase *UserUseCase) DeleteUser(id uint32) (User, error) {
 	return userRepo, nil
 }
 
-func (userUseCase *UserUseCase) GetUser(id uint32) (User, error) {
+func (userUseCase *UserUseCase) GetUser(id int) (User, error) {
 	if id == 0 {
 		return User{}, errors.New("user ID cannot be empty")
 	}

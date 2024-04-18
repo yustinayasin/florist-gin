@@ -28,7 +28,7 @@ func (controller *CartsProductsController) AddProductToCart(c *gin.Context) {
 
 	var cartsProducts request.CartsProducts
 
-	err := c.BindJSON(&cartsProducts)
+	err := c.Bind(&cartsProducts)
 
 	if err != nil {
 		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "Error binding the carts products data")
@@ -61,9 +61,9 @@ func (controller *CartsProductsController) EditProductFromCart(c *gin.Context) {
 		return
 	}
 
-	parseUint32 := uint32(cartsProductsId)
+	parseUint32 := int(cartsProductsId)
 
-	err = c.BindJSON(&cartProducts)
+	err = c.Bind(&cartProducts)
 
 	if err != nil {
 		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "Error binding the carts products data")
@@ -94,7 +94,7 @@ func (controller *CartsProductsController) DeleteProductFromCart(c *gin.Context)
 		return
 	}
 
-	parseUint32 := uint32(cartsProductsId)
+	parseUint32 := int(cartsProductsId)
 
 	cartsproducts, errRepo := controller.usecase.DeleteProductFromCart(parseUint32)
 

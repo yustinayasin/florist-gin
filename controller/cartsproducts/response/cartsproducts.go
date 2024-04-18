@@ -6,10 +6,10 @@ import (
 )
 
 type CartsProductsResponse struct {
-	Id        uint32 `json:"id"`
-	CartId    uint32 `json:"cartId"`
-	ProductId uint32 `json:"productId"`
-	Quantity  int    `json:"quantity"`
+	Id        int `form:"id"`
+	CartId    int `form:"cartId"`
+	ProductId int `form:"productId"`
+	Quantity  int `form:"quantity"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

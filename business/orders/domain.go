@@ -6,11 +6,11 @@ import (
 )
 
 type Order struct {
-	Id         uint32
+	Id         int
 	Status     bool
 	Date       time.Time
 	TotalPrice int
-	UserId     uint32
+	UserId     int
 	User       users.User
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
@@ -18,14 +18,14 @@ type Order struct {
 
 type OrderUseCaseInterface interface {
 	AddOrder(order Order) (Order, error)
-	EditOrder(order Order, id uint32) (Order, error)
-	DeleteOrder(id uint32) (Order, error)
-	GetOrderDetail(id uint32) (Order, error)
+	EditOrder(order Order, id int) (Order, error)
+	DeleteOrder(id int) (Order, error)
+	GetOrderDetail(id int) (Order, error)
 }
 
 type OrderRepoInterface interface {
 	AddOrder(order Order) (Order, error)
-	EditOrder(order Order, id uint32) (Order, error)
-	DeleteOrder(id uint32) (Order, error)
-	GetOrderDetail(id uint32) (Order, error)
+	EditOrder(order Order, id int) (Order, error)
+	DeleteOrder(id int) (Order, error)
+	GetOrderDetail(id int) (Order, error)
 }

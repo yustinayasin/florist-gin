@@ -113,3 +113,13 @@ func (productUseCase *ProductUseCase) GetProductDetail(id int) (Product, error) 
 
 	return productRepo, nil
 }
+
+func (productUseCase *ProductUseCase) GetAllProduct(categoryId int) ([]Product, error) {
+	productRepo, err := productUseCase.Repo.GetAllProduct(categoryId)
+
+	if err != nil {
+		return []Product{}, err
+	}
+
+	return productRepo, nil
+}

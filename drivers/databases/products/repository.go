@@ -148,3 +148,43 @@ func (repo *ProductRepository) GetProductDetail(id int) (products.Product, error
 
 	return productUC, nil
 }
+
+func (repo *ProductRepository) GetAllProduct(categoryId int) ([]products.Product, error) {
+	var newProducts []Product
+
+	query := repo.Db.Preload("Category")
+
+	// Conditionally add the filter for categoryId if it's provided
+	if categoryId != 0 {
+		query = query.Where("category_id = ?", categoryId)
+	}
+
+	result := query.Find(&newProducts)
+
+	if result.Error != nil {
+		return []products.Product{}, errors.New("product not found")
+	}
+
+	ctx := context.Background()
+
+	// Set request parameters for content-disposition.
+	reqParams := make(url.Values)
+	// reqParams.Set("response-content-disposition", "inline")
+
+	// Generates a presigned url which expires in a day.
+	productUCs := make([]products.Product, len(newProducts))
+
+	for i, product := range newProducts {
+		presignedURL, err := repo.MinioClient.PresignedGetObject(ctx, "florist", "products/"+product.FileName, time.Second*24*60*60, reqParams)
+
+		if err != nil {
+			return []products.Product{}, err
+		}
+
+		productUCs[i] = product.ToUsecase()
+
+		productUCs[i].FileUrl = presignedURL
+	}
+
+	return productUCs, nil
+}

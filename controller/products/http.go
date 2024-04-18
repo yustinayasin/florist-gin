@@ -239,3 +239,35 @@ func (controller *ProductController) GetProductDetail(c *gin.Context) {
 
 	utils.SuccessResponse(c, productResponse, []string{"Successfully get product"})
 }
+
+func (controller *ProductController) GetAllProduct(c *gin.Context) {
+	if c.Request.Method != "GET" {
+		utils.ErrorResponseWithoutMessages(c, http.StatusMethodNotAllowed, "Invalid HTTP method")
+		return
+	}
+
+	categoryIdStr := c.Query("categoryId")
+	var categoryId int
+
+	if categoryIdStr != "" {
+		var err error
+		categoryId, err = strconv.Atoi(categoryIdStr)
+
+		if err != nil {
+			utils.ErrorResponse(c, http.StatusBadRequest, "Category ID must be an integer", err)
+			c.Abort()
+			return
+		}
+	}
+
+	product, errRepo := controller.usecase.GetAllProduct(categoryId)
+
+	if errRepo != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)
+		return
+	}
+
+	productResponse := response.FromUsecaseList(product)
+
+	utils.SuccessResponse(c, productResponse, []string{"Successfully get product"})
+}

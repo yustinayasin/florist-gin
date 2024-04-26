@@ -3,26 +3,53 @@ package cartsproducts
 import (
 	"errors"
 	"florist-gin/business/cartsproducts"
+	"florist-gin/drivers/databases/carts"
+	"florist-gin/drivers/databases/products"
 
 	"gorm.io/gorm"
 )
 
 type CartsProductsRepository struct {
-	Db *gorm.DB
+	Db          *gorm.DB
+	CartRepo    carts.CartRepository
+	ProductRepo products.ProductRepository
 }
 
-func NewCartsProductsRepository(database *gorm.DB) cartsproducts.CartsProductsRepoInterface {
+func NewCartsProductsRepository(database *gorm.DB, cartRepo carts.CartRepository, productRepo products.ProductRepository) cartsproducts.CartsProductsRepoInterface {
 	return &CartsProductsRepository{
-		Db: database,
+		Db:          database,
+		CartRepo:    cartRepo,
+		ProductRepo: productRepo,
 	}
 }
 
 func (repo *CartsProductsRepository) AddProductToCart(cartsProducts cartsproducts.CartsProducts) (cartsproducts.CartsProducts, error) {
 	cartsProductsDB := FromUsecase(cartsProducts)
 
-	result := repo.Db.Create(&cartsProductsDB)
+	var cart carts.Cart
+	var product products.Product
+
+	result := repo.CartRepo.Db.First(&cart, cartsProducts.CartId)
 
 	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return cartsproducts.CartsProducts{}, errors.New("cart not found")
+		}
+		return cartsproducts.CartsProducts{}, errors.New("error in database")
+	}
+
+	result = repo.ProductRepo.Db.First(&product, cartsProducts.ProductId)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return cartsproducts.CartsProducts{}, errors.New("product not found")
+		}
+		return cartsproducts.CartsProducts{}, errors.New("error in database")
+	}
+
+	resultCartsProducts := repo.Db.Create(&cartsProductsDB)
+
+	if resultCartsProducts.Error != nil {
 		return cartsproducts.CartsProducts{}, result.Error
 	}
 
@@ -32,12 +59,33 @@ func (repo *CartsProductsRepository) AddProductToCart(cartsProducts cartsproduct
 func (repo *CartsProductsRepository) EditProductFromCart(cartsProducts cartsproducts.CartsProducts, id int) (cartsproducts.CartsProducts, error) {
 	cartsProductsDb := FromUsecase(cartsProducts)
 
-	var newCartsProducts CartsProducts
+	var cart carts.Cart
+	var product products.Product
 
-	result := repo.Db.First(&newCartsProducts, id)
+	result := repo.CartRepo.Db.First(&cart, cartsProducts.CartId)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
+			return cartsproducts.CartsProducts{}, errors.New("cart not found")
+		}
+		return cartsproducts.CartsProducts{}, errors.New("error in database")
+	}
+
+	result = repo.ProductRepo.Db.First(&product, cartsProducts.ProductId)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return cartsproducts.CartsProducts{}, errors.New("product not found")
+		}
+		return cartsproducts.CartsProducts{}, errors.New("error in database")
+	}
+
+	var newCartsProducts CartsProducts
+
+	resultCartsProducts := repo.Db.First(&newCartsProducts, id)
+
+	if resultCartsProducts.Error != nil {
+		if resultCartsProducts.Error == gorm.ErrRecordNotFound {
 			return cartsproducts.CartsProducts{}, errors.New("CartsProducts not found")
 		}
 		return cartsproducts.CartsProducts{}, errors.New("error in database")

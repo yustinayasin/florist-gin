@@ -97,7 +97,7 @@ func main() {
 	cartUseCaseInterface := cartUsecase.NewUseCase(cartRepoInterface)
 	cartControllerInterface := cartController.NewCartController(cartUseCaseInterface)
 
-	cartsProductsRepoInterface := cartsProductsRepo.NewCartsProductsRepository(db)
+	cartsProductsRepoInterface := cartsProductsRepo.NewCartsProductsRepository(db, cartRepo.CartRepository{Db: db}, productRepo.ProductRepository{Db: db})
 	cartsProductsUseCaseInterface := cartsProductsUsecase.NewUseCase(cartsProductsRepoInterface)
 	cartsProductsControllerInterface := cartsProductsController.NewCartsProductsController(cartsProductsUseCaseInterface)
 

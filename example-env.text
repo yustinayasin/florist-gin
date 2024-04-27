@@ -1,0 +1,12 @@
+!! Change the extention into .env !!
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=
+DB_PASS=
+DB_NAME=
+JWT_SECRET=
+JWT_EXPIRED=
+MINIO_ENDPOINT=
+MINIO_ACCESS_KEY=
+MINIO_SECRET_KEY=

@@ -73,7 +73,7 @@ func main() {
 	endpoint := os.Getenv("MINIO_ENDPOINT")
 	accessKeyID := os.Getenv("MINIO_ACCESS_KEY")
 	secretAccessKey := os.Getenv("MINIO_SECRET_KEY")
-	useSSL := false
+	useSSL := true
 
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, &minio.Options{

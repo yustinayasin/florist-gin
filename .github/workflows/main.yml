@@ -53,12 +53,12 @@ jobs:
 
       - name: Move into the repository and pull the lastest version
         run: |
-          git checkout master
-          git pull origin master
+          cd ../..
+          sudo docker pull ystnysn/florist-backend:latest
+          cd backend/florist-gin
       
       - name: Docker compose
         run: |
-          sudo docker build --tag florist-backend:latest --file ./Dockerfile
           sudo docker-compose up
 
       

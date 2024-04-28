@@ -26,7 +26,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/florist-backend:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/florist-backend:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,3 +46,15 @@ jobs:
         run: |
           sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" 
           sudo ssh ubuntu@${{ secrets.VPS_IPV4 }} "echo 'Logged in to VPS successfully'"
+
+      - name: Move into the repository and pull the lastest version
+        run: |
+          cd backend/florist-gin
+          git checkout master
+          git pull origin master
+      
+      - name: Docker compose
+        run: sudo docker-compose up
+        
+      
+

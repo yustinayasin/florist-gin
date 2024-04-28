@@ -8,7 +8,7 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=go.mod,target=go.mod \
     go mod download 
 # Build the Go application
-RUN -mount=type=cache,target=/go/pkg/mod/ \
+RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=.,target=. \
     go build -o /bin .
 

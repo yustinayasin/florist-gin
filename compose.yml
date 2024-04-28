@@ -1,0 +1,55 @@
+services:
+  backend:
+    image: florist-backend
+    ports:
+      - "8080:8080"
+    networks:
+      - back-tier
+    env_file:
+      - config.env
+    volumes:
+      - ./backend:/app  # Mount your GoLang project directory into the container
+    environment:
+      - GIN_MODE=release  # Set Gin framework mode to release
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+    command: ["./backend"]  # Command to start your GoLang application
+    restart: always
+
+  database:
+    image: postgres:latest
+    ports:
+      - "5433:5432"
+    networks:
+      - back-tier
+    env_file:
+      - config.env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  db-data:
+    driver: flocker
+    driver_opts:
+      size: "10GiB"
+
+configs:
+  httpd-config:
+    external: true
+
+secrets:
+  server-certificate:
+    external: true
+
+networks:
+  # The presence of these objects is sufficient to define them
+  front-tier: {}
+  back-tier: {}

@@ -50,11 +50,13 @@ jobs:
         run: |
           pwd
           ls
+          cd /
+          ls
+          sudo docker images
 
       - name: Move into the repository and pull the lastest version
         run: |
-          cd ../..
-          sudo docker pull ystnysn/florist-backend:latest
+          # sudo docker pull ystnysn/florist-backend:latest
           cd backend/florist-gin
       
       - name: Docker compose

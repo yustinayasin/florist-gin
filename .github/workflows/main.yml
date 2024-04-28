@@ -45,10 +45,15 @@ jobs:
       - name: SSH into VPS
         run: |
           sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} "echo 'Logged in to VPS successfully'"
+      
+      - name: Debug
+        run: |
+          pwd
+          ls
 
       - name: Move into the repository and pull the lastest version
         run: |
-          cd backend/florist-gin
+          cd /backend/florist-gin
           git checkout master
           git pull origin master
       

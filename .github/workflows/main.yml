@@ -58,7 +58,7 @@ jobs:
       
       - name: Docker compose
         run: |
-          sudo docker build -t florist-backend:latest
+          sudo docker build --tag florist-backend:latest --file ./Dockerfile
           sudo docker-compose up
 
       

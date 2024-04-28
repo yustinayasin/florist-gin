@@ -44,8 +44,7 @@ jobs:
       
       - name: SSH into VPS
         run: |
-          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" 
-          sudo ssh ubuntu@${{ secrets.VPS_IPV4 }} "echo 'Logged in to VPS successfully'"
+          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh ubuntu@${{ secrets.VPS_IPV4 }} "echo 'Logged in to VPS successfully'"
 
       - name: Move into the repository and pull the lastest version
         run: |

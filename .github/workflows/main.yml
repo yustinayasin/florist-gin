@@ -53,7 +53,6 @@ jobs:
 
       - name: Move into the repository and pull the lastest version
         run: |
-          cd /backend/florist-gin
           git checkout master
           git pull origin master
       

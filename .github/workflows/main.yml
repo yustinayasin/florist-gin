@@ -56,8 +56,10 @@ jobs:
 
       - name: Move into the repository and pull the lastest version
         run: |
-          # sudo docker pull ystnysn/florist-backend:latest
-          cd backend/florist-gin
+          sudo docker pull ystnysn/florist-backend:latest
+          cd /home/runner/work/florist-gin/florist-gin
+          git checkout master
+          git pull origin master
       
       - name: Docker compose
         run: |

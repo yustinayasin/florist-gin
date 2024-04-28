@@ -54,7 +54,9 @@ jobs:
           git pull origin master
       
       - name: Docker compose
-        run: sudo docker-compose up
-        
+        run: |
+          sudo docker build -t florist-backend:latest
+          sudo docker-compose up
+
       
 

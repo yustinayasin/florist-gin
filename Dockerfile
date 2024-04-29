@@ -19,4 +19,4 @@ COPY --from=build /bin .
 # Expose the port the application runs on
 EXPOSE 8080
 # Command to run the executable
-CMD ["./main"]
+CMD ["./backend"]

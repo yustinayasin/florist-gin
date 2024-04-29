@@ -10,13 +10,13 @@ services:
     volumes:
       - .env:/src/.env
     environment:
-      - GIN_MODE=release  # Set Gin framework mode to release
+      - GIN_MODE=release 
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
       - DB_NAME=${DB_NAME}
-    command: ["./backend"]  # Command to start your GoLang application
+    command: ["./backend"] 
     restart: always
 
   database:
@@ -37,7 +37,7 @@ services:
 
 volumes:
   pgdata:
-    driver: lokal
+    driver: local
   .env:
     external: true
 
@@ -50,6 +50,4 @@ secrets:
     external: true
 
 networks:
-  # The presence of these objects is sufficient to define them
-  front-tier: {}
   back-tier: {}

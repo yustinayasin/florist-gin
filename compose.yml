@@ -8,7 +8,7 @@ services:
     env_file:
       - config.env
     volumes:
-      - ./backend:/app  # Mount your GoLang project directory into the container
+      - .env:/src/.env
     environment:
       - GIN_MODE=release  # Set Gin framework mode to release
       - DB_HOST=${DB_HOST}
@@ -36,10 +36,12 @@ services:
     restart: always
 
 volumes:
-  db-data:
+  pgdata:
     driver: flocker
     driver_opts:
       size: "10GiB"
+  .env:
+    external: true
 
 configs:
   httpd-config:

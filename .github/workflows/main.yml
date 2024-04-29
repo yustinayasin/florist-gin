@@ -46,9 +46,9 @@ jobs:
         run: |
           sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} "echo 'Logged in to VPS successfully'"
       
-      - name: Debug
-        run: |
-          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'pwd; ls; sudo docker images; eval "$(ssh-agent -s)"; ssh-add ~/.ssh/githubvps'
+      # - name: Debug
+      #   run: |
+      #     sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'pwd; ls; sudo docker images; eval "$(ssh-agent -s)"; ssh-add ~/.ssh/githubvps'
 
       - name: Move into the repository and pull the lastest version
         run: |
@@ -56,7 +56,7 @@ jobs:
       
       - name: Docker compose
         run: |
-          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'cd backend/florist-gin; git checkout master; eval "$(ssh-agent -s)"; ssh-add ~/.ssh/githubvps; git pull origin master; cat compose.yml; sudo docker-compose --verbose up'
+          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'cd backend/florist-gin; git checkout master; eval "$(ssh-agent -s)"; ssh-add ~/.ssh/githubvps; git pull origin master; cat compose.yml; sudo docker-compose up'
 
       
 

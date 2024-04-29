@@ -1,6 +1,6 @@
 services:
   backend:
-    image: florist-backend:latest
+    image: ystnysn/florist-backend:latest
     ports:
       - "8081:8080"
     networks:
@@ -48,4 +48,4 @@ secrets:
     external: true
 
 networks:
-  back-tier: 
+  back-tier: {}

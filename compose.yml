@@ -8,7 +8,7 @@ services:
     env_file:
       - config.env
     volumes:
-      - .env:/src/.env
+      - /config.env:/src/.env
     environment:
       - GIN_MODE=release 
       - DB_HOST=${DB_HOST}
@@ -38,8 +38,6 @@ services:
 volumes:
   pgdata:
     driver: local
-  .env:
-    external: true
 
 configs:
   httpd-config:

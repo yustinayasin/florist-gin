@@ -48,7 +48,7 @@ jobs:
       
       - name: Debug
         run: |
-          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'pwd; ls; sudo docker images; eval "$(ssh-agent -s)"; ssh-add ~/.ssh/githubvps'
+          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'pwd; ls; sudo docker images; eval "$(ssh-agent -s)"; ssh-add ~/.ssh/githubvps; ssh -T git@github.com'
 
       - name: Move into the repository and pull the lastest version
         run: |

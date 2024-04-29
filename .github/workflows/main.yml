@@ -54,9 +54,6 @@ jobs:
         run: |
           sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'sudo docker pull ystnysn/florist-backend:latest'
       
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
       - name: Docker compose
         run: |
           sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'cd backend/florist-gin; git checkout master; cat compose.yml; sudo docker-compose up'

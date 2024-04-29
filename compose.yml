@@ -37,9 +37,7 @@ services:
 
 volumes:
   pgdata:
-    driver: flocker
-    driver_opts:
-      size: "10GiB"
+    driver: lokal
   .env:
     external: true
 

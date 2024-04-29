@@ -52,14 +52,14 @@ jobs:
 
       - name: Move into the repository and pull the lastest version
         run: |
-          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'sudo docker pull ystnysn/florist-backend:latest; cd backend/florist-gin; git checkout master'
+          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'sudo docker pull ystnysn/florist-backend:latest'
       
       - name: Checkout code
         uses: actions/checkout@v4
       
       - name: Docker compose
         run: |
-          sudo docker-compose up
+          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'cd backend/florist-gin; git checkout master; sudo docker-compose up'
 
       
 

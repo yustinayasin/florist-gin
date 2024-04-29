@@ -56,7 +56,7 @@ jobs:
       
       - name: Docker compose
         run: |
-          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'cd backend/florist-gin; git checkout master; git pull master; cat compose.yml; sudo docker-compose up'
+          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'cd backend/florist-gin; git checkout master; git pull origin master; sudo docker-compose up'
 
       
 

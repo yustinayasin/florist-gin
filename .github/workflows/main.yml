@@ -48,11 +48,11 @@ jobs:
       
       - name: Debug
         run: |
-          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'pwd; ls; sudo docker images; cd ~/.ssh; ls'
+          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'pwd; ls; sudo docker images; sudo ssh-add githubvps'
 
       - name: Move into the repository and pull the lastest version
         run: |
-          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'sudo docker pull ystnysn/florist-backend:latest; git clone git@github.com:yustinayasin/florist-gin.git; ls'
+          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'sudo docker pull ystnysn/florist-backend:latest; cd backend/florist-gin; git checkout master; git pull origin master'
       
       - name: Docker compose
         run: |

@@ -25,7 +25,9 @@ services:
       - "5433:5432"
     networks:
       - back-tier
-    command: ["ls", "cat ./config.env"] 
+    command:
+      - "ls"
+      - "cat ./config.env"
     env_file:
       - ./config.env
     environment:

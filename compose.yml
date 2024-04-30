@@ -35,6 +35,12 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: always
 
+  debug:
+    image: busybox
+    command: ["/bin/sh", "-c", "cat /src/.env"]
+    volumes:
+      - ./.env:/src/.env
+
 volumes:
   pgdata:
     driver: local

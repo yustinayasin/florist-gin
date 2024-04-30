@@ -17,9 +17,9 @@ services:
     volumes:
       - ./config.env:/src/.env
     command: 
-      - "cd src"
-      - "ls -a"
-      - "./florist-gin"
+      - "sh" 
+      - "-c"
+      - "ls -a /src && ./florist-gin"
     restart: always
 
   database:

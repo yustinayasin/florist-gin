@@ -16,7 +16,7 @@ type Database struct {
 }
 
 func NewDatabase() (*gorm.DB, error) {
-	err := godotenv.Load("config.env")
+	err := godotenv.Load("/src/config.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}

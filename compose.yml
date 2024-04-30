@@ -16,11 +16,7 @@ services:
     #   - DB_NAME=${DB_NAME}
     volumes:
       - ./config.env:/src/.env
-    command: 
-      - "/bin/sh" 
-      - "-c"        
-      - "ls -a"
-      - "./florist-gin"
+    command: ["./florist-gin"]
     restart: always
 
   database:

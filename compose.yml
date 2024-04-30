@@ -16,7 +16,11 @@ services:
     #   - DB_NAME=${DB_NAME}
     volumes:
       - ./config.env:/src/.env
-    command: ["./florist-gin"] 
+    command: 
+      - "/bin/sh" 
+      - "-c"        
+      - "ls -a"
+      - "./florist-gin"
     restart: always
 
   database:
@@ -25,16 +29,12 @@ services:
       - "5433:5432"
     networks:
       - back-tier
-    command:
-      - "/bin/sh" 
-      - "-c"        
-      - "ls -a"
     env_file:
       - ./config.env
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASS}
+    # environment:
+    #   - POSTGRES_DB=${DB_NAME}
+    #   - POSTGRES_USER=${DB_USER}
+    #   - POSTGRES_PASSWORD=${DB_PASS}
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always

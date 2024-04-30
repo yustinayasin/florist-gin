@@ -56,7 +56,7 @@ func (controller RouteControllerList) RouteRegister(userRepoInterface users.User
 		cartsproducts.DELETE("/:cartsProductsId", middleware.RequireAuth(controller.CartsProductsController.DeleteProductFromCart, *controller.JWTConfig, userRepoInterface))
 	}
 
-	port := ":8081"
+	port := ":8080"
 	err := router.Run(port)
 	if err != nil {
 		log.Println("Failed to start server:", err)

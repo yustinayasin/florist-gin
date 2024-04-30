@@ -28,7 +28,7 @@ services:
     command:
       - "/bin/sh" 
       - "-c"        
-      - "cd /src && ls -a && cat .env"
+      - "ls -a"
     env_file:
       - ./config.env
     environment:

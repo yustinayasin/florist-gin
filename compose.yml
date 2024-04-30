@@ -7,13 +7,13 @@ services:
       - back-tier
     env_file:
       - ./config.env
-    environment:
-      - GIN_MODE=release 
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_NAME=${DB_NAME}
+    # environment:
+    #   - GIN_MODE=release 
+    #   - DB_HOST=${DB_HOST}
+    #   - DB_PORT=${DB_PORT}
+    #   - DB_USER=${DB_USER}
+    #   - DB_PASS=${DB_PASS}
+    #   - DB_NAME=${DB_NAME}
     volumes:
       - /config.env:/src/.env
     command: ["./florist-gin"] 
@@ -27,17 +27,17 @@ services:
       - back-tier
     env_file:
       - ./config.env
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASS}
+    # environment:
+    #   - POSTGRES_DB=${DB_NAME}
+    #   - POSTGRES_USER=${DB_USER}
+    #   - POSTGRES_PASSWORD=${DB_PASS}
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
 
   debug:
     image: busybox
-    command: ["/bin/sh", "-c", "cat /src/.env"]
+    command: ["/bin/sh", "-c", "cd /src", "ls", "cat /src/.env"]
     volumes:
       - ./.env:/src/.env
 

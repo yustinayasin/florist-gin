@@ -28,7 +28,7 @@ services:
     command:
       - "/bin/sh" 
       - "-c"        
-      - "cd /src && ls && cat config.env"
+      - "cd /src && ls -a && cat config.env"
     env_file:
       - ./config.env
     environment:
@@ -39,11 +39,11 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: always
 
-  debug:
-    image: busybox
-    command: ["/bin/sh", "-c", "cd /src", "ls", "cat /src/.env"]
-    volumes:
-      - ./.env:/src/.env
+  # debug:
+  #   image: busybox
+  #   command: ["/bin/sh", "-c", "cd /src", "ls", "cat /src/.env"]
+  #   volumes:
+  #     - ./.env:/src/.env
 
 volumes:
   pgdata:

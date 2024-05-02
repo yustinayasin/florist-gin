@@ -56,6 +56,14 @@ func (controller RouteControllerList) RouteRegister(userRepoInterface users.User
 		cartsproducts.DELETE("/:cartsProductsId", middleware.RequireAuth(controller.CartsProductsController.DeleteProductFromCart, *controller.JWTConfig, userRepoInterface))
 	}
 
+	order := router.Group("/order")
+	{
+		order.POST("/add", middleware.RequireAuth(controller.OrderController.AddOrder, *controller.JWTConfig, userRepoInterface))
+		order.PUT("/:orderId", middleware.RequireAuth(controller.OrderController.EditOrder, *controller.JWTConfig, userRepoInterface))
+		order.DELETE("/:orderId", middleware.RequireAuth(controller.OrderController.DeleteOrder, *controller.JWTConfig, userRepoInterface))
+		order.GET("/:orderId", middleware.RequireAuth(controller.OrderController.GetOrderDetail, *controller.JWTConfig, userRepoInterface))
+	}
+
 	port := ":8080"
 	err := router.Run(port)
 	if err != nil {

@@ -35,7 +35,7 @@ func (repo *OrderRepository) EditOrder(order orders.Order, id int) (orders.Order
 
 	var newOrder Order
 
-	result := repo.Db.First(&newOrder, id)
+	result := repo.Db.Preload("User").First(&newOrder, id)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -54,7 +54,7 @@ func (repo *OrderRepository) EditOrder(order orders.Order, id int) (orders.Order
 func (repo *OrderRepository) DeleteOrder(id int) (orders.Order, error) {
 	var orderDb Order
 
-	resultFind := repo.Db.First(&orderDb, id)
+	resultFind := repo.Db.Preload("User").First(&orderDb, id)
 
 	if resultFind.Error != nil {
 		return orders.Order{}, errors.New("order not found")
@@ -72,7 +72,7 @@ func (repo *OrderRepository) DeleteOrder(id int) (orders.Order, error) {
 func (repo *OrderRepository) GetOrderDetail(id int) (orders.Order, error) {
 	var orderDb Order
 
-	resultFind := repo.Db.First(&orderDb, id)
+	resultFind := repo.Db.Preload("User").First(&orderDb, id)
 
 	if resultFind.Error != nil {
 		return orders.Order{}, errors.New("order not found")

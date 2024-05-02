@@ -33,6 +33,10 @@ import (
 	orderUsecase "florist-gin/business/orders"
 	orderController "florist-gin/controller/orders"
 	orderRepo "florist-gin/drivers/databases/orders"
+
+	ordersProductsUsecase "florist-gin/business/ordersproducts"
+	ordersProductsController "florist-gin/controller/ordersproducts"
+	ordersProductsRepo "florist-gin/drivers/databases/ordersproducts"
 )
 
 func dbMigrate(db *gorm.DB) {
@@ -43,6 +47,7 @@ func dbMigrate(db *gorm.DB) {
 		&productRepo.Product{},
 		&cartsProductsRepo.CartsProducts{},
 		&orderRepo.Order{},
+		&ordersProductsRepo.OrdersProducts{},
 	)
 }
 
@@ -73,7 +78,7 @@ func main() {
 	endpoint := os.Getenv("MINIO_ENDPOINT")
 	accessKeyID := os.Getenv("MINIO_ACCESS_KEY")
 	secretAccessKey := os.Getenv("MINIO_SECRET_KEY")
-	useSSL := true
+	useSSL := false
 
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, &minio.Options{
@@ -105,13 +110,18 @@ func main() {
 	orderUseCaseInterface := orderUsecase.NewUseCase(orderRepoInterface)
 	orderControllerInterface := orderController.NewOrderController(orderUseCaseInterface)
 
+	ordersProductsRepoInterface := ordersProductsRepo.NewOrdersProductsRepository(db)
+	ordersProductsUseCaseInterface := ordersProductsUsecase.NewUseCase(ordersProductsRepoInterface)
+	ordersProductsControllerInterface := ordersProductsController.NewOrdersProductsController(ordersProductsUseCaseInterface)
+
 	routesInit := routes.RouteControllerList{
-		UserController:          *userControllerInterface,
-		ProductController:       *productControllerInterface,
-		CartController:          *cartControllerInterface,
-		CartsProductsController: *cartsProductsControllerInterface,
-		OrderController:         *orderControllerInterface,
-		JWTConfig:               &jwtConf,
+		UserController:           *userControllerInterface,
+		ProductController:        *productControllerInterface,
+		CartController:           *cartControllerInterface,
+		CartsProductsController:  *cartsProductsControllerInterface,
+		OrderController:          *orderControllerInterface,
+		OrdersProductsController: *ordersProductsControllerInterface,
+		JWTConfig:                &jwtConf,
 	}
 
 	routesInit.RouteRegister(userRepoInterface)

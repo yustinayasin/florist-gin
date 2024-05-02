@@ -6,6 +6,7 @@ import (
 	cartController "florist-gin/controller/carts"
 	cartsProductsController "florist-gin/controller/cartsproducts"
 	orderController "florist-gin/controller/orders"
+	ordersProductsController "florist-gin/controller/ordersproducts"
 	productController "florist-gin/controller/products"
 	userController "florist-gin/controller/users"
 	"log"
@@ -15,12 +16,13 @@ import (
 )
 
 type RouteControllerList struct {
-	UserController          userController.UserController
-	ProductController       productController.ProductController
-	CartController          cartController.CartController
-	CartsProductsController cartsProductsController.CartsProductsController
-	OrderController         orderController.OrderController
-	JWTConfig               *middleware.ConfigJWT
+	UserController           userController.UserController
+	ProductController        productController.ProductController
+	CartController           cartController.CartController
+	CartsProductsController  cartsProductsController.CartsProductsController
+	OrderController          orderController.OrderController
+	OrdersProductsController ordersProductsController.OrdersProductsController
+	JWTConfig                *middleware.ConfigJWT
 }
 
 func (controller RouteControllerList) RouteRegister(userRepoInterface users.UserRepoInterface) {
@@ -62,6 +64,14 @@ func (controller RouteControllerList) RouteRegister(userRepoInterface users.User
 		order.PUT("/:orderId", middleware.RequireAuth(controller.OrderController.EditOrder, *controller.JWTConfig, userRepoInterface))
 		order.DELETE("/:orderId", middleware.RequireAuth(controller.OrderController.DeleteOrder, *controller.JWTConfig, userRepoInterface))
 		order.GET("/:orderId", middleware.RequireAuth(controller.OrderController.GetOrderDetail, *controller.JWTConfig, userRepoInterface))
+	}
+
+	ordersproducts := router.Group("/ordersproducts")
+	{
+		ordersproducts.POST("/add", middleware.RequireAuth(controller.OrdersProductsController.AddOrdersProducts, *controller.JWTConfig, userRepoInterface))
+		ordersproducts.PUT("/:ordersProductsId", middleware.RequireAuth(controller.OrdersProductsController.EditOrdersProducts, *controller.JWTConfig, userRepoInterface))
+		ordersproducts.DELETE("/:ordersProductsId", middleware.RequireAuth(controller.OrdersProductsController.DeleteOrdersProducts, *controller.JWTConfig, userRepoInterface))
+		ordersproducts.GET("/:ordersProductsId", middleware.RequireAuth(controller.OrdersProductsController.GetOrdersProductsDetail, *controller.JWTConfig, userRepoInterface))
 	}
 
 	port := ":8080"

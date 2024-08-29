@@ -42,8 +42,8 @@ func (controller RouteControllerList) RouteRegister(userRepoInterface users.User
 		product.POST("/add", middleware.RequireAuthAdmin(controller.ProductController.AddProduct, *controller.JWTConfig, userRepoInterface))
 		product.PUT("/:productId", middleware.RequireAuthAdmin(controller.ProductController.EditProduct, *controller.JWTConfig, userRepoInterface))
 		product.DELETE("/:productId", middleware.RequireAuthAdmin(controller.ProductController.DeleteProduct, *controller.JWTConfig, userRepoInterface))
-		product.GET("/:productId", middleware.RequireAuth(controller.ProductController.GetProductDetail, *controller.JWTConfig, userRepoInterface))
-		product.GET("/", middleware.RequireAuth(controller.ProductController.GetAllProduct, *controller.JWTConfig, userRepoInterface))
+		product.GET("/:productId", controller.ProductController.GetProductDetail)
+		product.GET("/", controller.ProductController.GetAllProduct)
 	}
 
 	cart := router.Group("/cart")

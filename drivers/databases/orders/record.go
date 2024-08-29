@@ -8,7 +8,6 @@ import (
 
 type Order struct {
 	Id         int `gorm:"primaryKey;unique"`
-	Status     bool
 	Date       time.Time
 	TotalPrice int
 	UserId     int
@@ -22,7 +21,6 @@ func (order Order) ToUsecase() orders.Order {
 
 	return orders.Order{
 		Id:         order.Id,
-		Status:     order.Status,
 		Date:       order.Date,
 		TotalPrice: order.TotalPrice,
 		UserId:     order.UserId,
@@ -46,7 +44,6 @@ func FromUsecase(order orders.Order) Order {
 
 	return Order{
 		Id:         order.Id,
-		Status:     order.Status,
 		Date:       order.Date,
 		TotalPrice: order.TotalPrice,
 		UserId:     order.UserId,

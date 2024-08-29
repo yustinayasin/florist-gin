@@ -70,11 +70,6 @@ func (controller *OrderController) EditOrder(c *gin.Context) {
 		return
 	}
 
-	if orderEdit.Status != "true" && orderEdit.Status != "false" {
-		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "Status should be boolean value")
-		return
-	}
-
 	order, errRepo := controller.usecase.EditOrder(*orderEdit.ToUsecase(), parseUint32)
 
 	if errRepo != nil {

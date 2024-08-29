@@ -45,8 +45,7 @@ func (repo *OrderRepository) EditOrder(order orders.Order, id int) (orders.Order
 		return orders.Order{}, errors.New("error in database")
 	}
 
-	newOrder.Status = orderDb.Status
-
+	newOrder.TotalPrice = orderDb.TotalPrice
 	repo.Db.Save(&newOrder)
 	return newOrder.ToUsecase(), nil
 }

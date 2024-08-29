@@ -24,7 +24,6 @@ func (orderUseCase *OrderUseCase) AddOrder(order Order) (Order, error) {
 		return Order{}, errors.New("user ID cannot be empty")
 	}
 
-	order.Status = false
 	order.Date = time.Now()
 
 	orderRepo, err := orderUseCase.Repo.AddOrder(order)

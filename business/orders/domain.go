@@ -7,7 +7,6 @@ import (
 
 type Order struct {
 	Id         int
-	Status     bool
 	Date       time.Time
 	TotalPrice int
 	UserId     int

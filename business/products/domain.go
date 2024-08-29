@@ -26,7 +26,7 @@ type ProductUseCaseInterface interface {
 	EditProduct(product Product, id int) (Product, error)
 	DeleteProduct(id int) (Product, error)
 	GetProductDetail(id int) (Product, error)
-	GetAllProduct(categoryId int) ([]Product, error)
+	GetAllProduct(categoryId *int) ([]Product, error)
 }
 
 type ProductRepoInterface interface {
@@ -34,5 +34,5 @@ type ProductRepoInterface interface {
 	EditProduct(product Product, id int) (Product, error)
 	DeleteProduct(id int) (Product, error)
 	GetProductDetail(id int) (Product, error)
-	GetAllProduct(categoryId int) ([]Product, error)
+	GetAllProduct(categoryId *int) ([]Product, error)
 }

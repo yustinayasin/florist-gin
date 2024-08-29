@@ -247,17 +247,18 @@ func (controller *ProductController) GetAllProduct(c *gin.Context) {
 	}
 
 	categoryIdStr := c.Query("categoryId")
-	var categoryId int
+	var categoryId *int
 
 	if categoryIdStr != "" {
 		var err error
-		categoryId, err = strconv.Atoi(categoryIdStr)
+		parsedId, err := strconv.Atoi(categoryIdStr)
 
 		if err != nil {
 			utils.ErrorResponse(c, http.StatusBadRequest, "Category ID must be an integer", err)
 			c.Abort()
 			return
 		}
+		categoryId = &parsedId
 	}
 
 	product, errRepo := controller.usecase.GetAllProduct(categoryId)

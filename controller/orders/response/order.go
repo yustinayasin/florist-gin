@@ -8,7 +8,6 @@ import (
 
 type OrderResponse struct {
 	Id         int        `form:"id"`
-	Status     bool       `form:"status"`
 	Date       time.Time  `form:"time"`
 	TotalPrice int        `form:"totalPrice"`
 	UserId     int        `form:"userId"`
@@ -20,7 +19,6 @@ type OrderResponse struct {
 func FromUsecase(order orders.Order) OrderResponse {
 	return OrderResponse{
 		Id:         order.Id,
-		Status:     order.Status,
 		Date:       order.Date,
 		TotalPrice: order.TotalPrice,
 		UserId:     order.UserId,

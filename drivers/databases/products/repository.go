@@ -149,14 +149,14 @@ func (repo *ProductRepository) GetProductDetail(id int) (products.Product, error
 	return productUC, nil
 }
 
-func (repo *ProductRepository) GetAllProduct(categoryId int) ([]products.Product, error) {
+func (repo *ProductRepository) GetAllProduct(categoryId *int) ([]products.Product, error) {
 	var newProducts []Product
 
 	query := repo.Db.Preload("Category")
 
 	// Conditionally add the filter for categoryId if it's provided
-	if categoryId != 0 {
-		query = query.Where("category_id = ?", categoryId)
+	if categoryId != nil {
+		query = query.Where("category_id = ?", *categoryId)
 	}
 
 	result := query.Find(&newProducts)

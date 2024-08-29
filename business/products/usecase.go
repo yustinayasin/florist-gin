@@ -114,7 +114,12 @@ func (productUseCase *ProductUseCase) GetProductDetail(id int) (Product, error) 
 	return productRepo, nil
 }
 
-func (productUseCase *ProductUseCase) GetAllProduct(categoryId int) ([]Product, error) {
+func (productUseCase *ProductUseCase) GetAllProduct(categoryId *int) ([]Product, error) {
+	if categoryId == nil {
+		// Fetch all products without filtering by category
+		return productUseCase.Repo.GetAllProduct(nil)
+	}
+
 	productRepo, err := productUseCase.Repo.GetAllProduct(categoryId)
 
 	if err != nil {

@@ -72,6 +72,9 @@ func (controller *UserController) Login(c *gin.Context) {
 		return
 	}
 
+	// Set the cookie with the token for session cookies
+	c.SetCookie("auth_token", user.Token, 0, "/", "localhost", false, true)
+
 	utils.SuccessResponse(c, user, []string{"User successfully login"})
 }
 

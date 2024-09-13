@@ -1,12 +1,16 @@
 package cartsproducts
 
-import "time"
+import (
+	"florist-gin/business/products"
+	"time"
+)
 
 type CartsProducts struct {
 	Id        int
 	CartId    int
 	ProductId int
 	Quantity  int
+	Product   products.Product
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

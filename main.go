@@ -15,8 +15,9 @@ import (
 
 	cartsProductsUsecase "florist-gin/business/cartsproducts"
 	cartsProductsController "florist-gin/controller/cartsproducts"
-	cartsProductsRepo "florist-gin/drivers/databases/cartsproducts"
+	cartsProductsDB "florist-gin/drivers/databases/cartsproducts"
 	categoryRepo "florist-gin/drivers/databases/categories"
+	cartsProductsRepo "florist-gin/drivers/repositories/cartsproducts"
 
 	userUsecase "florist-gin/business/users"
 	userController "florist-gin/controller/users"
@@ -28,7 +29,8 @@ import (
 
 	cartUsecase "florist-gin/business/carts"
 	cartController "florist-gin/controller/carts"
-	cartRepo "florist-gin/drivers/databases/carts"
+	cartDB "florist-gin/drivers/databases/carts"
+	cartRepo "florist-gin/drivers/repositories/carts"
 
 	orderUsecase "florist-gin/business/orders"
 	orderController "florist-gin/controller/orders"
@@ -43,9 +45,9 @@ func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&userRepo.User{},
 		&categoryRepo.Category{},
-		&cartRepo.Cart{},
+		&cartDB.Cart{},
 		&productRepo.Product{},
-		&cartsProductsRepo.CartsProducts{},
+		&cartsProductsDB.CartsProducts{},
 		&orderRepo.Order{},
 		&ordersProductsRepo.OrdersProducts{},
 	)
@@ -102,8 +104,8 @@ func main() {
 	cartUseCaseInterface := cartUsecase.NewUseCase(cartRepoInterface)
 	cartControllerInterface := cartController.NewCartController(cartUseCaseInterface)
 
-	cartsProductsRepoInterface := cartsProductsRepo.NewCartsProductsRepository(db, cartRepo.CartRepository{Db: db}, productRepo.ProductRepository{Db: db})
-	cartsProductsUseCaseInterface := cartsProductsUsecase.NewUseCase(cartsProductsRepoInterface)
+	cartsProductsDBInterface := cartsProductsRepo.NewCartsProductsRepository(db, cartRepo.CartRepository{Db: db}, productRepo.ProductRepository{Db: db})
+	cartsProductsUseCaseInterface := cartsProductsUsecase.NewUseCase(cartsProductsDBInterface)
 	cartsProductsControllerInterface := cartsProductsController.NewCartsProductsController(cartsProductsUseCaseInterface)
 
 	orderRepoInterface := orderRepo.NewOrderRepository(db)

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"florist-gin/business/users"
 	"florist-gin/drivers/databases/carts"
+	cartsRepo "florist-gin/drivers/repositories/carts"
 	"florist-gin/helpers"
 
 	"gorm.io/gorm"
@@ -11,10 +12,10 @@ import (
 
 type UserRepository struct {
 	Db       *gorm.DB
-	CartRepo carts.CartRepository
+	CartRepo cartsRepo.CartRepository
 }
 
-func NewUserRepository(database *gorm.DB, cartRepo carts.CartRepository) users.UserRepoInterface {
+func NewUserRepository(database *gorm.DB, cartRepo cartsRepo.CartRepository) users.UserRepoInterface {
 	return &UserRepository{
 		Db:       database,
 		CartRepo: cartRepo,

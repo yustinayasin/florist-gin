@@ -4,18 +4,20 @@ import (
 	"errors"
 	"florist-gin/business/cartsproducts"
 	"florist-gin/drivers/databases/carts"
+	cartsProductsDB "florist-gin/drivers/databases/cartsproducts"
 	"florist-gin/drivers/databases/products"
+	cartRepo "florist-gin/drivers/repositories/carts"
 
 	"gorm.io/gorm"
 )
 
 type CartsProductsRepository struct {
 	Db          *gorm.DB
-	CartRepo    carts.CartRepository
+	CartRepo    cartRepo.CartRepository
 	ProductRepo products.ProductRepository
 }
 
-func NewCartsProductsRepository(database *gorm.DB, cartRepo carts.CartRepository, productRepo products.ProductRepository) cartsproducts.CartsProductsRepoInterface {
+func NewCartsProductsRepository(database *gorm.DB, cartRepo cartRepo.CartRepository, productRepo products.ProductRepository) cartsproducts.CartsProductsRepoInterface {
 	return &CartsProductsRepository{
 		Db:          database,
 		CartRepo:    cartRepo,
@@ -24,7 +26,7 @@ func NewCartsProductsRepository(database *gorm.DB, cartRepo carts.CartRepository
 }
 
 func (repo *CartsProductsRepository) AddProductToCart(cartsProducts cartsproducts.CartsProducts) (cartsproducts.CartsProducts, error) {
-	cartsProductsDB := FromUsecase(cartsProducts)
+	cartsProductsDB := cartsProductsDB.FromUsecase(cartsProducts)
 
 	var cart carts.Cart
 	var product products.Product
@@ -57,7 +59,7 @@ func (repo *CartsProductsRepository) AddProductToCart(cartsProducts cartsproduct
 }
 
 func (repo *CartsProductsRepository) EditProductFromCart(cartsProducts cartsproducts.CartsProducts, id int) (cartsproducts.CartsProducts, error) {
-	cartsProductsDb := FromUsecase(cartsProducts)
+	cartsProductsDb := cartsProductsDB.FromUsecase(cartsProducts)
 
 	var cart carts.Cart
 	var product products.Product
@@ -80,7 +82,7 @@ func (repo *CartsProductsRepository) EditProductFromCart(cartsProducts cartsprod
 		return cartsproducts.CartsProducts{}, errors.New("error in database")
 	}
 
-	var newCartsProducts CartsProducts
+	var newCartsProducts cartsProductsDB.CartsProducts
 
 	resultCartsProducts := repo.Db.First(&newCartsProducts, id)
 
@@ -100,7 +102,7 @@ func (repo *CartsProductsRepository) EditProductFromCart(cartsProducts cartsprod
 }
 
 func (repo *CartsProductsRepository) DeleteProductFromCart(id int) (cartsproducts.CartsProducts, error) {
-	var cartsProductsDb CartsProducts
+	var cartsProductsDb cartsProductsDB.CartsProducts
 
 	resultFind := repo.Db.First(&cartsProductsDb, id)
 

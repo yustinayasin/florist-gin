@@ -1,16 +1,26 @@
 package carts
 
 import (
-	"florist-gin/business/products"
 	"time"
 )
 
+type Product struct {
+	Id          int
+	Name        string
+	Description string
+	Price       int
+	Stock       int
+	FileUrl     string
+	Quantity    int
+}
+
 type Cart struct {
-	Id        int
-	UserId    int
-	Product   []products.Product
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Id         int
+	UserId     int
+	Products   []Product
+	TotalPrice int
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 type CartUseCaseInterface interface {

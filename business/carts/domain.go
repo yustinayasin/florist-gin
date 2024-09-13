@@ -14,9 +14,9 @@ type Cart struct {
 }
 
 type CartUseCaseInterface interface {
-	GetCart(id int) (Cart, error)
+	GetCart(userId int) (Cart, error)
 }
 
 type CartRepoInterface interface {
-	GetCart(id int) (Cart, error)
+	GetCart(userId int) (Cart, error)
 }

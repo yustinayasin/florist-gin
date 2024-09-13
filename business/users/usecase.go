@@ -3,7 +3,6 @@ package users
 import (
 	"errors"
 	"florist-gin/helpers"
-	"fmt"
 )
 
 type GeneratorToken interface {
@@ -60,8 +59,6 @@ func (userUseCase *UserUseCase) Login(user User) (User, error) {
 	}
 
 	userRepo, err := userUseCase.Repo.Login(user)
-
-	fmt.Println(err)
 
 	if err != nil {
 		return User{}, err

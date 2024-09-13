@@ -1,6 +1,8 @@
 package carts
 
-import "errors"
+import (
+	"errors"
+)
 
 type CartUseCase struct {
 	Repo CartRepoInterface
@@ -12,12 +14,12 @@ func NewUseCase(cartRepo CartRepoInterface) CartUseCaseInterface {
 	}
 }
 
-func (cartUseCase *CartUseCase) GetCart(id int) (Cart, error) {
-	if id == 0 {
-		return Cart{}, errors.New("cart ID cannot be empty")
+func (cartUseCase *CartUseCase) GetCart(userId int) (Cart, error) {
+	if userId == 0 {
+		return Cart{}, errors.New("cart user ID cannot be empty")
 	}
 
-	cartRepo, err := cartUseCase.Repo.GetCart(id)
+	cartRepo, err := cartUseCase.Repo.GetCart(userId)
 
 	if err != nil {
 		return Cart{}, err

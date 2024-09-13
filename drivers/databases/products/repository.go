@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"florist-gin/business/products"
-	"fmt"
 	"net/url"
 	"time"
 
@@ -139,8 +138,6 @@ func (repo *ProductRepository) GetProductDetail(id int) (products.Product, error
 	if err != nil {
 		return products.Product{}, err
 	}
-
-	fmt.Println("url repo", presignedURL)
 
 	productUC := productDb.ToUsecase()
 

@@ -3,7 +3,6 @@ package orders
 import (
 	"errors"
 	"florist-gin/business/orders"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -41,7 +40,6 @@ func (repo *OrderRepository) EditOrder(order orders.Order, id int) (orders.Order
 		if result.Error == gorm.ErrRecordNotFound {
 			return orders.Order{}, errors.New("Order not found")
 		}
-		fmt.Println(result.Error)
 		return orders.Order{}, errors.New("error in database")
 	}
 

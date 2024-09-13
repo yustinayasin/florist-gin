@@ -98,7 +98,7 @@ func main() {
 	productUseCaseInterface := productUsecase.NewUseCase(productRepoInterface)
 	productControllerInterface := productController.NewProductController(productUseCaseInterface)
 
-	cartRepoInterface := cartRepo.NewCartRepository(db)
+	cartRepoInterface := cartRepo.NewCartRepository(db, minioClient)
 	cartUseCaseInterface := cartUsecase.NewUseCase(cartRepoInterface)
 	cartControllerInterface := cartController.NewCartController(cartUseCaseInterface)
 

@@ -4,7 +4,6 @@ import (
 	"florist-gin/business/users"
 	"florist-gin/controller/users/request"
 	"florist-gin/utils"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -31,8 +30,6 @@ func (controller *UserController) SignUp(c *gin.Context) {
 	var userSignUp request.UserEdit
 
 	err := c.Bind(&userSignUp)
-
-	fmt.Println(userSignUp)
 
 	if err != nil {
 		utils.ErrorResponseWithoutMessages(c, http.StatusBadRequest, "Error binding the user data")

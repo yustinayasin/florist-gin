@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"florist-gin/business/carts"
+	"florist-gin/business/users"
+	"florist-gin/controller/carts/response"
 	"florist-gin/utils"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,22 +26,38 @@ func (controller *CartController) GetCart(c *gin.Context) {
 		return
 	}
 
-	cartId, err := strconv.ParseUint(c.Param("cartId"), 10, 32)
+	// cartUserId, err := strconv.ParseUint(c.Param("cartUserId"), 10, 32)
 
-	if err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Cart ID must be an integer", err)
-		c.Abort()
+	// if err != nil {
+	// 	utils.ErrorResponse(c, http.StatusBadRequest, "Cart user ID must be an integer", err)
+	// 	c.Abort()
+	// 	return
+	// }
+
+	// paramUint32 := int(cartUserId)
+
+	// Retrieve the user from the context
+	userInterface, exists := c.Get("user")
+	if !exists {
+		utils.ErrorResponseWithoutMessages(c, http.StatusUnauthorized, "User not found in context")
 		return
 	}
 
-	paramUint32 := int(cartId)
+	// Type assert the user to the correct type. userInterface variable it's not a pointer
+	user, ok := userInterface.(users.User) // Adjust the type according to your actual user struct
+	if !ok {
+		utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to type assert user")
+		return
+	}
 
-	cart, errRepo := controller.usecase.GetCart(paramUint32)
+	cart, errRepo := controller.usecase.GetCart(user.Id)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)
 		return
 	}
 
-	utils.SuccessResponse(c, cart, []string{"Successfully get the cart"})
+	cartResponse := response.FromUsecase(cart)
+
+	utils.SuccessResponse(c, cartResponse, []string{"Successfully get the cart"})
 }

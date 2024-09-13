@@ -80,14 +80,13 @@ func verifyToken(tokenString string, jwtConf ConfigJWT, c *gin.Context) (*jwt.To
 func RequireAuth(next gin.HandlerFunc, jwtConf ConfigJWT, userRepoInterface users.UserRepoInterface) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Get the token from header
-		tokenString := c.GetHeader("Authorization")
-		if tokenString == "" {
+		tokenString, err := c.Cookie("auth_token")
+
+		if err != nil {
 			utils.ErrorResponseWithoutMessages(c, http.StatusUnauthorized, "You need to login first")
 			c.Abort()
 			return
 		}
-
-		tokenString = tokenString[len("Bearer "):]
 
 		// Verify token
 		token, err := verifyToken(tokenString, jwtConf, c)

@@ -57,7 +57,7 @@ func (controller RouteControllerList) RouteRegister(userRepoInterface users.User
 
 	cart := router.Group("/cart")
 	{
-		cart.GET("/:cartId", middleware.RequireAuth(controller.CartController.GetCart, *controller.JWTConfig, userRepoInterface))
+		cart.GET("/", middleware.RequireAuth(controller.CartController.GetCart, *controller.JWTConfig, userRepoInterface))
 	}
 
 	cartsproducts := router.Group("/cartsproducts")

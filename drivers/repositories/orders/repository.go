@@ -3,6 +3,7 @@ package orders
 import (
 	"errors"
 	"florist-gin/business/orders"
+	ordersDB "florist-gin/drivers/databases/orders"
 
 	"gorm.io/gorm"
 )
@@ -18,7 +19,7 @@ func NewOrderRepository(database *gorm.DB) orders.OrderRepoInterface {
 }
 
 func (repo *OrderRepository) AddOrder(order orders.Order) (orders.Order, error) {
-	orderDB := FromUsecase(order)
+	orderDB := ordersDB.FromUsecase(order)
 
 	result := repo.Db.Create(&orderDB)
 
@@ -30,9 +31,9 @@ func (repo *OrderRepository) AddOrder(order orders.Order) (orders.Order, error) 
 }
 
 func (repo *OrderRepository) EditOrder(order orders.Order, id int) (orders.Order, error) {
-	orderDb := FromUsecase(order)
+	orderDb := ordersDB.FromUsecase(order)
 
-	var newOrder Order
+	var newOrder ordersDB.Order
 
 	result := repo.Db.Preload("User").First(&newOrder, id)
 
@@ -49,7 +50,7 @@ func (repo *OrderRepository) EditOrder(order orders.Order, id int) (orders.Order
 }
 
 func (repo *OrderRepository) DeleteOrder(id int) (orders.Order, error) {
-	var orderDb Order
+	var orderDb ordersDB.Order
 
 	resultFind := repo.Db.Preload("User").First(&orderDb, id)
 
@@ -67,7 +68,7 @@ func (repo *OrderRepository) DeleteOrder(id int) (orders.Order, error) {
 }
 
 func (repo *OrderRepository) GetOrderDetail(id int) (orders.Order, error) {
-	var orderDb Order
+	var orderDb ordersDB.Order
 
 	resultFind := repo.Db.Preload("User").First(&orderDb, id)
 

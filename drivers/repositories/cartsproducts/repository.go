@@ -5,8 +5,9 @@ import (
 	"florist-gin/business/cartsproducts"
 	"florist-gin/drivers/databases/carts"
 	cartsProductsDB "florist-gin/drivers/databases/cartsproducts"
-	"florist-gin/drivers/databases/products"
+	productsDB "florist-gin/drivers/databases/products"
 	cartRepo "florist-gin/drivers/repositories/carts"
+	"florist-gin/drivers/repositories/products"
 
 	"gorm.io/gorm"
 )
@@ -29,7 +30,7 @@ func (repo *CartsProductsRepository) AddProductToCart(cartsProducts cartsproduct
 	cartsProductsDB := cartsProductsDB.FromUsecase(cartsProducts)
 
 	var cart carts.Cart
-	var product products.Product
+	var product productsDB.Product
 
 	result := repo.CartRepo.Db.First(&cart, cartsProducts.CartId)
 
@@ -62,7 +63,7 @@ func (repo *CartsProductsRepository) EditProductFromCart(cartsProducts cartsprod
 	cartsProductsDb := cartsProductsDB.FromUsecase(cartsProducts)
 
 	var cart carts.Cart
-	var product products.Product
+	var product productsDB.Product
 
 	result := repo.CartRepo.Db.First(&cart, cartsProducts.CartId)
 

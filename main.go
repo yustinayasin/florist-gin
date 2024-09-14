@@ -21,11 +21,13 @@ import (
 
 	userUsecase "florist-gin/business/users"
 	userController "florist-gin/controller/users"
-	userRepo "florist-gin/drivers/databases/users"
+	userDB "florist-gin/drivers/databases/users"
+	userRepo "florist-gin/drivers/repositories/users"
 
 	productUsecase "florist-gin/business/products"
 	productController "florist-gin/controller/products"
-	productRepo "florist-gin/drivers/databases/products"
+	productDB "florist-gin/drivers/databases/products"
+	productRepo "florist-gin/drivers/repositories/products"
 
 	cartUsecase "florist-gin/business/carts"
 	cartController "florist-gin/controller/carts"
@@ -34,22 +36,24 @@ import (
 
 	orderUsecase "florist-gin/business/orders"
 	orderController "florist-gin/controller/orders"
-	orderRepo "florist-gin/drivers/databases/orders"
+	orderDB "florist-gin/drivers/databases/orders"
+	orderRepo "florist-gin/drivers/repositories/orders"
 
 	ordersProductsUsecase "florist-gin/business/ordersproducts"
 	ordersProductsController "florist-gin/controller/ordersproducts"
-	ordersProductsRepo "florist-gin/drivers/databases/ordersproducts"
+	ordersProductsDB "florist-gin/drivers/databases/ordersproducts"
+	ordersProductsRepo "florist-gin/drivers/repositories/ordersproducts"
 )
 
 func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(
-		&userRepo.User{},
+		&userDB.User{},
 		&categoryRepo.Category{},
 		&cartDB.Cart{},
-		&productRepo.Product{},
+		&productDB.Product{},
 		&cartsProductsDB.CartsProducts{},
-		&orderRepo.Order{},
-		&ordersProductsRepo.OrdersProducts{},
+		&orderDB.Order{},
+		&ordersProductsDB.OrdersProducts{},
 	)
 }
 

@@ -3,6 +3,7 @@ package ordersproducts
 import (
 	"errors"
 	"florist-gin/business/ordersproducts"
+	ordersProductsDB "florist-gin/drivers/databases/ordersproducts"
 
 	"gorm.io/gorm"
 )
@@ -18,7 +19,7 @@ func NewOrdersProductsRepository(database *gorm.DB) ordersproducts.OrdersProduct
 }
 
 func (repo *OrdersProductsRepository) AddOrdersProducts(ordersProducts ordersproducts.OrdersProducts) (ordersproducts.OrdersProducts, error) {
-	ordersProductsDB := FromUsecase(ordersProducts)
+	ordersProductsDB := ordersProductsDB.FromUsecase(ordersProducts)
 
 	resultOrdersProducts := repo.Db.Create(&ordersProductsDB)
 
@@ -30,9 +31,9 @@ func (repo *OrdersProductsRepository) AddOrdersProducts(ordersProducts orderspro
 }
 
 func (repo *OrdersProductsRepository) EditOrdersProducts(ordersProducts ordersproducts.OrdersProducts, id int) (ordersproducts.OrdersProducts, error) {
-	ordersProductsDb := FromUsecase(ordersProducts)
+	ordersProductsDb := ordersProductsDB.FromUsecase(ordersProducts)
 
-	var newOrdersProducts OrdersProducts
+	var newOrdersProducts ordersProductsDB.OrdersProducts
 
 	resultOrdersProducts := repo.Db.First(&newOrdersProducts, id)
 
@@ -51,7 +52,7 @@ func (repo *OrdersProductsRepository) EditOrdersProducts(ordersProducts orderspr
 }
 
 func (repo *OrdersProductsRepository) DeleteOrdersProducts(id int) (ordersproducts.OrdersProducts, error) {
-	var ordersProductsDb OrdersProducts
+	var ordersProductsDb ordersProductsDB.OrdersProducts
 
 	resultFind := repo.Db.First(&ordersProductsDb, id)
 
@@ -69,7 +70,7 @@ func (repo *OrdersProductsRepository) DeleteOrdersProducts(id int) (ordersproduc
 }
 
 func (repo *OrdersProductsRepository) GetOrdersProductsDetail(id int) (ordersproducts.OrdersProducts, error) {
-	var ordersProductsDb OrdersProducts
+	var ordersProductsDb ordersProductsDB.OrdersProducts
 
 	resultFind := repo.Db.Preload("Order").Preload("Product").First(&ordersProductsDb, id)
 

@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"florist-gin/business/products"
+	productsDB "florist-gin/drivers/databases/products"
 	"net/url"
 	"time"
 
@@ -25,7 +26,7 @@ func NewProductRepository(database *gorm.DB, minioClient *minio.Client) products
 }
 
 func (repo *ProductRepository) AddProduct(product products.Product) (products.Product, error) {
-	productDB := FromUsecase(product)
+	productDB := productsDB.FromUsecase(product)
 
 	ctx := context.Background()
 
@@ -49,9 +50,9 @@ func (repo *ProductRepository) AddProduct(product products.Product) (products.Pr
 }
 
 func (repo *ProductRepository) EditProduct(product products.Product, id int) (products.Product, error) {
-	productDb := FromUsecase(product)
+	productDb := productsDB.FromUsecase(product)
 
-	var newProduct Product
+	var newProduct productsDB.Product
 
 	result := repo.Db.First(&newProduct, id)
 
@@ -92,7 +93,7 @@ func (repo *ProductRepository) EditProduct(product products.Product, id int) (pr
 }
 
 func (repo *ProductRepository) DeleteProduct(id int) (products.Product, error) {
-	var productDb Product
+	var productDb productsDB.Product
 
 	resultFind := repo.Db.First(&productDb, id)
 
@@ -118,7 +119,7 @@ func (repo *ProductRepository) DeleteProduct(id int) (products.Product, error) {
 }
 
 func (repo *ProductRepository) GetProductDetail(id int) (products.Product, error) {
-	var productDb Product
+	var productDb productsDB.Product
 
 	resultFind := repo.Db.Preload("Category").First(&productDb, id)
 
@@ -147,7 +148,7 @@ func (repo *ProductRepository) GetProductDetail(id int) (products.Product, error
 }
 
 func (repo *ProductRepository) GetAllProduct(categoryId *int) ([]products.Product, error) {
-	var newProducts []Product
+	var newProducts []productsDB.Product
 
 	query := repo.Db.Preload("Category")
 

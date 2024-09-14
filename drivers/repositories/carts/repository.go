@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"florist-gin/business/carts"
-	cartsRepo "florist-gin/drivers/databases/carts"
+	cartsDB "florist-gin/drivers/databases/carts"
 	"florist-gin/drivers/databases/cartsproducts"
 	"net/url"
 	"time"
@@ -26,13 +26,13 @@ func NewCartRepository(database *gorm.DB, minioClient *minio.Client) carts.CartR
 }
 
 func (repo *CartRepository) GetCart(userId int) (carts.Cart, error) {
-	var cartDb cartsRepo.Cart
+	var cartDb cartsDB.Cart
 	var cartsProductsDB []cartsproducts.CartsProducts
 	var productList []carts.Product
 	var product carts.Product
 	totalPrice := 0
 
-	resultFind := repo.Db.Model(&cartsRepo.Cart{}).Where("user_id = ?", userId).First(&cartDb)
+	resultFind := repo.Db.Model(&cartsDB.Cart{}).Where("user_id = ?", userId).First(&cartDb)
 	if resultFind.Error != nil {
 		return carts.Cart{}, errors.New("cart not found")
 	}

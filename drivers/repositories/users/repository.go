@@ -4,7 +4,8 @@ import (
 	"errors"
 	"florist-gin/business/users"
 	"florist-gin/drivers/databases/carts"
-	cartsRepo "florist-gin/drivers/repositories/carts"
+	usersDB "florist-gin/drivers/databases/users"
+	cartsDB "florist-gin/drivers/repositories/carts"
 	"florist-gin/helpers"
 
 	"gorm.io/gorm"
@@ -12,10 +13,10 @@ import (
 
 type UserRepository struct {
 	Db       *gorm.DB
-	CartRepo cartsRepo.CartRepository
+	CartRepo cartsDB.CartRepository
 }
 
-func NewUserRepository(database *gorm.DB, cartRepo cartsRepo.CartRepository) users.UserRepoInterface {
+func NewUserRepository(database *gorm.DB, cartRepo cartsDB.CartRepository) users.UserRepoInterface {
 	return &UserRepository{
 		Db:       database,
 		CartRepo: cartRepo,
@@ -23,7 +24,7 @@ func NewUserRepository(database *gorm.DB, cartRepo cartsRepo.CartRepository) use
 }
 
 func (repo *UserRepository) SignUp(user users.User) (users.User, error) {
-	userDB := FromUsecase(user)
+	userDB := usersDB.FromUsecase(user)
 
 	result := repo.Db.Create(&userDB)
 
@@ -45,7 +46,7 @@ func (repo *UserRepository) SignUp(user users.User) (users.User, error) {
 }
 
 func (repo *UserRepository) Login(user users.User) (users.User, error) {
-	userDB := FromUsecase(user)
+	userDB := usersDB.FromUsecase(user)
 
 	result := repo.Db.Where("email = ?", userDB.Email).Preload("Type").First(&userDB)
 
@@ -66,9 +67,9 @@ func (repo *UserRepository) Login(user users.User) (users.User, error) {
 }
 
 func (repo *UserRepository) EditUser(user users.User, id int) (users.User, error) {
-	userDb := FromUsecase(user)
+	userDb := usersDB.FromUsecase(user)
 
-	var newUser User
+	var newUser usersDB.User
 
 	result := repo.Db.Preload("Type").First(&newUser, id)
 
@@ -91,7 +92,7 @@ func (repo *UserRepository) EditUser(user users.User, id int) (users.User, error
 }
 
 func (repo *UserRepository) DeleteUser(id int) (users.User, error) {
-	var userDb User
+	var userDb usersDB.User
 
 	resultFind := repo.Db.First(&userDb, id)
 
@@ -109,7 +110,7 @@ func (repo *UserRepository) DeleteUser(id int) (users.User, error) {
 }
 
 func (repo *UserRepository) GetUser(id int) (users.User, error) {
-	var userDb User
+	var userDb usersDB.User
 
 	resultFind := repo.Db.First(&userDb, id)
 

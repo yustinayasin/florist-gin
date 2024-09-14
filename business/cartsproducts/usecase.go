@@ -14,9 +14,9 @@ func NewUseCase(cartsProductsRepo CartsProductsRepoInterface) CartsProductsUseCa
 	}
 }
 
-func (cartsProductsUseCase *CartsProductsUseCase) AddProductToCart(cartsproducts CartsProducts) (CartsProducts, error) {
-	if cartsproducts.CartId == 0 {
-		return CartsProducts{}, errors.New("cart id cannot be empty")
+func (cartsProductsUseCase *CartsProductsUseCase) AddProductToCart(cartsproducts CartsProducts, userId int) (CartsProducts, error) {
+	if userId == 0 {
+		return CartsProducts{}, errors.New("user id cannot be empty")
 	}
 
 	if cartsproducts.ProductId == 0 {
@@ -27,7 +27,7 @@ func (cartsProductsUseCase *CartsProductsUseCase) AddProductToCart(cartsproducts
 		return CartsProducts{}, errors.New("quantity cannot be empty")
 	}
 
-	userRepo, err := cartsProductsUseCase.Repo.AddProductToCart(cartsproducts)
+	userRepo, err := cartsProductsUseCase.Repo.AddProductToCart(cartsproducts, userId)
 
 	if err != nil {
 		return CartsProducts{}, err
@@ -41,13 +41,13 @@ func (cartsProductsUseCase *CartsProductsUseCase) EditProductFromCart(cartsprodu
 		return CartsProducts{}, errors.New("carts products ID cannot be empty")
 	}
 
-	if cartsproducts.CartId == 0 {
-		return CartsProducts{}, errors.New("card ID cannot be empty")
-	}
+	// if cartsproducts.CartId == 0 {
+	// 	return CartsProducts{}, errors.New("card ID cannot be empty")
+	// }
 
-	if cartsproducts.ProductId == 0 {
-		return CartsProducts{}, errors.New("product ID cannot be empty")
-	}
+	// if cartsproducts.ProductId == 0 {
+	// 	return CartsProducts{}, errors.New("product ID cannot be empty")
+	// }
 
 	if cartsproducts.Quantity == 0 {
 		return CartsProducts{}, errors.New("quantity cannot be empty")

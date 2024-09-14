@@ -5,13 +5,14 @@ import (
 )
 
 type Product struct {
-	Id          int
-	Name        string
-	Description string
-	Price       int
-	Stock       int
-	FileUrl     string
-	Quantity    int
+	ProductId       int
+	CartsProductsId int
+	Name            string
+	Description     string
+	Price           int
+	Stock           int
+	FileUrl         string
+	Quantity        int
 }
 
 type Cart struct {

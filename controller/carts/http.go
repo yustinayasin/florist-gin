@@ -38,6 +38,7 @@ func (controller *CartController) GetCart(c *gin.Context) {
 
 	// Retrieve the user from the context
 	userInterface, exists := c.Get("user")
+
 	if !exists {
 		utils.ErrorResponseWithoutMessages(c, http.StatusUnauthorized, "User not found in context")
 		return

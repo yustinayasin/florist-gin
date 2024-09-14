@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"florist-gin/business/cartsproducts"
+	"florist-gin/business/users"
 	"florist-gin/controller/cartsproducts/request"
 	"florist-gin/utils"
 	"net/http"
@@ -26,6 +27,21 @@ func (controller *CartsProductsController) AddProductToCart(c *gin.Context) {
 		return
 	}
 
+	// Retrieve the user from the context
+	userInterface, exists := c.Get("user")
+
+	if !exists {
+		utils.ErrorResponseWithoutMessages(c, http.StatusUnauthorized, "User not found in context")
+		return
+	}
+
+	// Type assert the user to the correct type. userInterface variable it's not a pointer
+	user, ok := userInterface.(users.User) // Adjust the type according to your actual user struct
+	if !ok {
+		utils.ErrorResponseWithoutMessages(c, http.StatusInternalServerError, "Failed to type assert user")
+		return
+	}
+
 	var cartsProducts request.CartsProducts
 
 	err := c.Bind(&cartsProducts)
@@ -35,7 +51,7 @@ func (controller *CartsProductsController) AddProductToCart(c *gin.Context) {
 		return
 	}
 
-	cartsproducts, errRepo := controller.usecase.AddProductToCart(*cartsProducts.ToUsecase())
+	cartsproducts, errRepo := controller.usecase.AddProductToCart(*cartsProducts.ToUsecase(), user.Id)
 
 	if errRepo != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Error in repo", errRepo)

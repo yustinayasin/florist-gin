@@ -57,7 +57,8 @@ func (repo *CartRepository) GetCart(userId int) (carts.Cart, error) {
 		}
 
 		product.Quantity = cartsProducts.Quantity
-		product.Id = cartsProducts.Product.Id
+		product.ProductId = cartsProducts.Product.Id
+		product.CartsProductsId = cartsProducts.Id
 		product.Description = cartsProducts.Product.Description
 		product.Name = cartsProducts.Product.Name
 		product.Price = cartsProducts.Product.Price

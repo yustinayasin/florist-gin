@@ -16,13 +16,13 @@ type CartsProducts struct {
 }
 
 type CartsProductsUseCaseInterface interface {
-	AddProductToCart(cartsProducts CartsProducts) (CartsProducts, error)
+	AddProductToCart(cartsProducts CartsProducts, userId int) (CartsProducts, error)
 	EditProductFromCart(cartsProducts CartsProducts, idCartsProducts int) (CartsProducts, error)
 	DeleteProductFromCart(idCartsProducts int) (CartsProducts, error)
 }
 
 type CartsProductsRepoInterface interface {
-	AddProductToCart(cartsProducts CartsProducts) (CartsProducts, error)
+	AddProductToCart(cartsProducts CartsProducts, userId int) (CartsProducts, error)
 	EditProductFromCart(cartsProducts CartsProducts, idCartsProducts int) (CartsProducts, error)
 	DeleteProductFromCart(idCartsProducts int) (CartsProducts, error)
 }

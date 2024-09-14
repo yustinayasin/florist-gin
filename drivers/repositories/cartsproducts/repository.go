@@ -4,7 +4,7 @@ import (
 	"errors"
 	"florist-gin/business/cartsproducts"
 	"florist-gin/drivers/databases/carts"
-	cartsProductsDB "florist-gin/drivers/databases/cartsproducts"
+	cPDB "florist-gin/drivers/databases/cartsproducts"
 	productsDB "florist-gin/drivers/databases/products"
 	cartRepo "florist-gin/drivers/repositories/carts"
 	"florist-gin/drivers/repositories/products"
@@ -26,13 +26,14 @@ func NewCartsProductsRepository(database *gorm.DB, cartRepo cartRepo.CartReposit
 	}
 }
 
-func (repo *CartsProductsRepository) AddProductToCart(cartsProducts cartsproducts.CartsProducts) (cartsproducts.CartsProducts, error) {
-	cartsProductsDB := cartsProductsDB.FromUsecase(cartsProducts)
+func (repo *CartsProductsRepository) AddProductToCart(cartsProducts cartsproducts.CartsProducts, userId int) (cartsproducts.CartsProducts, error) {
+	cartsProductsDB := cPDB.FromUsecase(cartsProducts)
 
 	var cart carts.Cart
 	var product productsDB.Product
+	var newCartsProducts cPDB.CartsProducts
 
-	result := repo.CartRepo.Db.First(&cart, cartsProducts.CartId)
+	result := repo.CartRepo.Db.Where("user_id = ?", userId).First(&cart)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -50,40 +51,40 @@ func (repo *CartsProductsRepository) AddProductToCart(cartsProducts cartsproduct
 		return cartsproducts.CartsProducts{}, errors.New("error in database")
 	}
 
-	resultCartsProducts := repo.Db.Create(&cartsProductsDB)
+	result = repo.Db.Where("cart_id = ?", cart.Id).Where("product_id = ?", product.Id).First(&newCartsProducts)
 
-	if resultCartsProducts.Error != nil {
-		return cartsproducts.CartsProducts{}, result.Error
+	if result.Error == nil {
+		newCartsProducts.Quantity = newCartsProducts.Quantity + 1
+		editedCartsProducts, _ := repo.EditProductFromCart(newCartsProducts.ToUseCase(), newCartsProducts.Id)
+		cartsProductsDB = cPDB.FromUsecase(editedCartsProducts)
+	} else {
+		cartsProductsDB.CartId = cart.Id
+		resultCartsProducts := repo.Db.Create(&cartsProductsDB)
+
+		if resultCartsProducts.Error != nil {
+			return cartsproducts.CartsProducts{}, result.Error
+		}
 	}
 
 	return cartsProductsDB.ToUseCase(), nil
 }
 
 func (repo *CartsProductsRepository) EditProductFromCart(cartsProducts cartsproducts.CartsProducts, id int) (cartsproducts.CartsProducts, error) {
-	cartsProductsDb := cartsProductsDB.FromUsecase(cartsProducts)
+	cartsProductsDb := cPDB.FromUsecase(cartsProducts)
 
-	var cart carts.Cart
+	// var cart carts.Cart
 	var product productsDB.Product
 
-	result := repo.CartRepo.Db.First(&cart, cartsProducts.CartId)
+	// result := repo.CartRepo.Db.First(&cart, cartsProducts.CartId)
 
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			return cartsproducts.CartsProducts{}, errors.New("cart not found")
-		}
-		return cartsproducts.CartsProducts{}, errors.New("error in database")
-	}
+	// if result.Error != nil {
+	// 	if result.Error == gorm.ErrRecordNotFound {
+	// 		return cartsproducts.CartsProducts{}, errors.New("cart not found")
+	// 	}
+	// 	return cartsproducts.CartsProducts{}, errors.New("error in database")
+	// }
 
-	result = repo.ProductRepo.Db.First(&product, cartsProducts.ProductId)
-
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			return cartsproducts.CartsProducts{}, errors.New("product not found")
-		}
-		return cartsproducts.CartsProducts{}, errors.New("error in database")
-	}
-
-	var newCartsProducts cartsProductsDB.CartsProducts
+	var newCartsProducts cPDB.CartsProducts
 
 	resultCartsProducts := repo.Db.First(&newCartsProducts, id)
 
@@ -94,8 +95,21 @@ func (repo *CartsProductsRepository) EditProductFromCart(cartsProducts cartsprod
 		return cartsproducts.CartsProducts{}, errors.New("error in database")
 	}
 
-	newCartsProducts.CartId = cartsProductsDb.CartId
-	newCartsProducts.ProductId = cartsProductsDb.ProductId
+	result := repo.ProductRepo.Db.First(&product, newCartsProducts.ProductId)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return cartsproducts.CartsProducts{}, errors.New("product not found")
+		}
+		return cartsproducts.CartsProducts{}, errors.New("error in database")
+	}
+
+	if cartsProductsDb.Quantity > product.Stock {
+		return cartsproducts.CartsProducts{}, errors.New("the requested quantity exceeds available stock")
+	}
+
+	// newCartsProducts.CartId = cartsProductsDb.CartId
+	// newCartsProducts.ProductId = cartsProductsDb.ProductId
 	newCartsProducts.Quantity = cartsProductsDb.Quantity
 
 	repo.Db.Save(&newCartsProducts)
@@ -103,7 +117,7 @@ func (repo *CartsProductsRepository) EditProductFromCart(cartsProducts cartsprod
 }
 
 func (repo *CartsProductsRepository) DeleteProductFromCart(id int) (cartsproducts.CartsProducts, error) {
-	var cartsProductsDb cartsProductsDB.CartsProducts
+	var cartsProductsDb cPDB.CartsProducts
 
 	resultFind := repo.Db.First(&cartsProductsDb, id)
 

@@ -31,7 +31,7 @@ func (controller RouteControllerList) RouteRegister(userRepoInterface users.User
 
 	// CORS configuration
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"}, // Replace with your frontend origins
+		AllowOrigins:     []string{"http://localhost:3000", "https://poppy-florist.yustinayasin.com"}, // Replace with your frontend origins
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		AllowCredentials: true,

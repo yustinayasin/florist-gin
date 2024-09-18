@@ -41,11 +41,11 @@ jobs:
 
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
-      
+
       - name: SSH into VPS
         run: |
           sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} "echo 'Logged in to VPS successfully'"
-      
+
       # - name: Debug
       #   run: |
       #     sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'pwd; ls; sudo docker images; eval "$(ssh-agent -s)"; ssh-add ~/.ssh/githubvps'
@@ -53,10 +53,15 @@ jobs:
       - name: Move into the repository and pull the lastest version
         run: |
           sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'sudo docker pull ystnysn/florist-backend:latest'
-      
-      - name: Docker compose
+
+      # - name: Docker compose
+      #   run: |
+      #     sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'cd backend/florist-gin; git checkout master; eval "$(ssh-agent -s)"; ssh-add ~/.ssh/githubvps; git pull origin master; cat compose.yml; sudo docker-compose up'
+
+      - name: Build the docker again
         run: |
-          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'cd backend/florist-gin; git checkout master; eval "$(ssh-agent -s)"; ssh-add ~/.ssh/githubvps; git pull origin master; cat compose.yml; sudo docker-compose up'
+          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'cd backend/florist-gin; git checkout master; eval "$(ssh-agent -s)"; ssh-add ~/.ssh/githubvps; git pull origin master; docker build -t ystnysn/florist-backend:latest .'
 
-      
-
+      - name: Remove the previous container name and run newest image
+        run: |
+          sudo sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.VPS_IPV4 }} 'cd backend/florist-gin; docker rm poppy-florist-backend-container; docker run -d -p 8081:8080 --name poppy-florist-backend-container ystnysn/florist-backend:latest'

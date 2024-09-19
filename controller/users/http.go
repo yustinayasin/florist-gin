@@ -70,7 +70,7 @@ func (controller *UserController) Login(c *gin.Context) {
 	}
 
 	// Set the cookie with the token for session cookies on a development level
-	c.SetCookie("auth_token", user.Token, 0, "/", "localhost", false, true)
+	// c.SetCookie("auth_token", user.Token, 0, "/", "localhost", false, true)
 
 	// Set the cookie with the token for session cookies on a production level
 	c.SetCookie("auth_token", user.Token, 0, "/", "poppy-florist.yustinayasin.com", true, true)
